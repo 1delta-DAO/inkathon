@@ -4,6 +4,7 @@ import { CenterBody } from '@/components/layout/CenterBody'
 import { ChainInfo } from '@/components/web3/ChainInfo'
 import { ConnectButton } from '@/components/web3/ConnectButton'
 import { GreeterContractInteractions } from '@/components/web3/GreeterContractInteractions'
+import { OracleexampleContractInteractions } from '@/components/web3/OracleexampleContractInteractions'
 import { useInkathon } from '@scio-labs/use-inkathon'
 import type { NextPage } from 'next'
 import { useEffect } from 'react'
@@ -36,6 +37,9 @@ const HomePage: NextPage = () => {
 
           {/* Greeter Read/Write Contract Interactions */}
           <GreeterContractInteractions />
+
+          {/* Oracleexample Read Contract Interactions */}
+          <OracleexampleContractInteractions />
         </div>
       </CenterBody>
     </>
