@@ -8,6 +8,8 @@
     "test": "bash test-all.sh",
     "build": "bash build-all.sh",
     "node": "substrate-contracts-node --dev --base-path ./.node-data",
+    "fork-mainnet": "npx @acala-network/chopsticks@latest --endpoint=wss://ws.azero.dev --db=.fork-data/alephzero/db.sqlite --port=9944",
+    "fork-testnet": "npx @acala-network/chopsticks@latest --endpoint=wss://ws.test.azero.dev --db=.fork-data/alephzero-testnet/db.sqlite --port=9944",
     "script": "f() { tsx ./scripts/$1; }; f \"$@\"",
     "deploy": "pnpm run script deploy",
     "contracts-ui": "open https://contracts-ui.substrate.io/?rpc=ws://127.0.0.1:9944",
