@@ -1,0 +1,26 @@
+[package]
+name = "oracleexample"
+version = "0.1.0"
+edition = "2021"
+authors = ["volkan@1delta.io"]
+
+[dependencies]
+ink = { version = "4.3.0", default-features = false }
+
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
+scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
+dia-oracle-getter = { path = "../oracle/oracle-getter", default-features = false }
+
+[dev-dependencies]
+ink_e2e = "4.3.0"
+dia-oracle = { path = "../oracle/oracle", default-features = false }
+dia-oracle-setter = { path = "../oracle/oracle-setter", default-features = false }
+
+[lib]
+path = "lib.rs"
+
+[features]
+default = ["std"]
+std = ["ink/std", "scale/std", "scale-info/std", "dia-oracle-getter/std"]
+ink-as-dependency = []
+e2e-tests = []
