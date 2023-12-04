@@ -132,3 +132,6 @@ deployments/**/development.ts
 # Environment files
 *.env*
 !.env*.example
+
+# Chopsticks fork data
+.fork-data
