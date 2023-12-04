@@ -1,6 +1,9 @@
-![inkathon Devtooling Banner](inkathon-devtooling-banner.png)
+# 1delta Notes
+### Known Bugs:
+- If the error "can not import node module" occurs delete the ".next" folder in your frontend to resolve it.
 
 # ink!athon Boilerplate
+![inkathon Devtooling Banner](inkathon-devtooling-banner.png)
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Built with ink!](https://raw.githubusercontent.com/paritytech/ink/master/.images/badge.svg)](https://use.ink)
