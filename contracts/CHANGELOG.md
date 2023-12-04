@@ -1,5 +1,35 @@
 # @inkathon/contracts
 
+## 0.3.2
+
+### Patch Changes
+
+- [#39](https://github.com/scio-labs/inkathon/pull/39) [`47aed1b`](https://github.com/scio-labs/inkathon/commit/47aed1b722138bd6fca2883337151d3c0b77e4a3) Thanks [@ical10](https://github.com/ical10)! - Deploy contracts & add deployment addresses for Rococo Contracts test-network.
+
+## 0.3.1
+
+### Patch Changes
+
+- [`e73d9b8`](https://github.com/scio-labs/inkathon/commit/e73d9b86a4299702c59538ac43612b9977d479be) Thanks [@wottpal](https://github.com/wottpal)! - Replace `ts-node` with `tsx` (https://github.com/privatenumber/tsx) for less-verbose TypeScript script execution.
+
+## 0.3.0
+
+### Minor Changes
+
+- [`cda19ae`](https://github.com/scio-labs/inkathon/commit/cda19aeb4107c076daeb17a455fecfbd7f373044) Thanks [@wottpal](https://github.com/wottpal)! - Vastly reduce boilerplate for JS/TS script initialization of Polkadot.js. You no longer need to read and parse dotenv environment variables in every script.
+
+## 0.2.1
+
+### Patch Changes
+
+- [`3f4179e`](https://github.com/scio-labs/inkathon/commit/3f4179e9325b155324d23796234d9f853ae03dd9) Thanks [@wottpal](https://github.com/wottpal)! - Add workaround to run ESM-enabled ts-node scripts with Node.js 20. Related: https://github.com/TypeStrong/ts-node/issues/1997
+
+## 0.2.0
+
+### Minor Changes
+
+- [`c2cfbe4`](https://github.com/scio-labs/inkathon/commit/c2cfbe428a4e86f7ddb3d25886d4da79238b69be) Thanks [@wottpal](https://github.com/wottpal)! - Ensure & document Windows, Ubuntu, and macOS compatibility. 🌈
+
 ## 0.1.3
 
 ### Patch Changes

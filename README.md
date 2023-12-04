@@ -60,9 +60,28 @@ The frontend works out of the box, without a local node running, as the sample c
 
 > **Pre-requisites:**
 >
-> - Setup Node.js v16+ (recommended via [nvm](https://github.com/nvm-sh/nvm))
-> - Install [pnpm](https://pnpm.io/installation) (recommended via [Node.js Corepack](https://nodejs.org/api/corepack.html))
+> - Setup Node.js v18+ (recommended via [nvm](https://github.com/nvm-sh/nvm) with `nvm install 18`)
+> - Install [pnpm](https://pnpm.io/installation) (recommended via [Node.js Corepack](https://nodejs.org/api/corepack.html) or `npm i -g pnpm`)
 > - Clone this repository
+
+<details>
+<summary><strong>Special Instructions for Windows Users</strong></summary>
+
+> [!IMPORTANT]  
+> Windows users must either use [WSL](https://learn.microsoft.com/windows/wsl/install) (recommended) or a custom shell like [Git Bash](https://git-scm.com/downloads). PowerShell is not supported.
+
+> **Pre-requisites when using WSL for Linux:**
+>
+> - Install [WSL](https://learn.microsoft.com/windows/wsl/install) and execute _all_ commands in the WSL terminal
+> - Setup Node.js v18+ (recommended via [nvm](https://github.com/nvm-sh/nvm) with `nvm install 18`)
+> - Install the following npm packages globally:
+> - `npm i -g npm`
+> - `npm i -g pnpm node-gyp make`
+> - Clone this repository into the WSL file system (e.g. `/home/<user>/inkathon`).
+>
+> **Tip:** You can enter `\\wsl$\` in the top bar of the Windows Explorer to access the WSL file system visually.
+
+</details>
 
 ```bash
 # Install dependencies (once)
@@ -130,9 +149,9 @@ To replace the default `Greeter` contract or add a new one, you need to do the f
 
 ### 3. Custom Scripts
 
-Adding custom scripts is useful to interact with your contracts or test certain functionality. Therefore, just duplicate & reuse the `contracts/scripts/script.template.ts` file and run it via `pnpm run script <script-name>`.
+Adding custom scripts is useful to interact with your contracts or test certain functionality. Therefore, just duplicate & reuse the `contracts/scripts/script.template.ts` file and run it via `pnpm run script <script-name>`. This command will run the TypeScript file directly via [`tsx`](https://github.com/privatenumber/tsx).
 
-For general scripts the same environment variable initialization & configuration applies as described below in the [Deployment](#deployment) section (e.g. to change the target network).
+For general scripts, the same environment variable initialization & configuration applies as described below in the [Deployment](#deployment) section (e.g. to change the target network).
 
 ## The Stack 🥞
 

@@ -1,5 +1,50 @@
 # @inkathon/frontend
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`47aed1b`](https://github.com/scio-labs/inkathon/commit/47aed1b722138bd6fca2883337151d3c0b77e4a3)]:
+  - @inkathon/contracts@0.3.2
+
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`e73d9b8`](https://github.com/scio-labs/inkathon/commit/e73d9b86a4299702c59538ac43612b9977d479be)]:
+  - @inkathon/contracts@0.3.1
+
+## 0.3.0
+
+### Minor Changes
+
+- [`64adba1`](https://github.com/scio-labs/inkathon/commit/64adba196dd98ad272bbb4a99b4f7bc7186ae385) Thanks [@wottpal](https://github.com/wottpal)! - Add Nightly Connect support for Aleph Zero, Aleph Zero Testnet, and Local Node. Checkout: https://connect.nightly.app/.
+
+## 0.3.0
+
+### Patch Changes
+
+- Updated dependencies [[`cda19ae`](https://github.com/scio-labs/inkathon/commit/cda19aeb4107c076daeb17a455fecfbd7f373044)]:
+  - @inkathon/contracts@0.3.0
+
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`3f4179e`](https://github.com/scio-labs/inkathon/commit/3f4179e9325b155324d23796234d9f853ae03dd9)]:
+  - @inkathon/contracts@0.2.1
+
+## 0.2.0
+
+### Minor Changes
+
+- [`c2cfbe4`](https://github.com/scio-labs/inkathon/commit/c2cfbe428a4e86f7ddb3d25886d4da79238b69be) Thanks [@wottpal](https://github.com/wottpal)! - Ensure & document Windows, Ubuntu, and macOS compatibility. 🌈
+
+### Patch Changes
+
+- Updated dependencies [[`c2cfbe4`](https://github.com/scio-labs/inkathon/commit/c2cfbe428a4e86f7ddb3d25886d4da79238b69be)]:
+  - @inkathon/contracts@0.2.0
+
 ## 0.1.3
 
 ### Patch Changes
