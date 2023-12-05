@@ -1,0 +1,542 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Trait containing `AccessControl` messages used to manage ‘LendingPool’ parameters. USed by managers."><title>LendingPoolManage in lending_project::traits::lending_pool - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-cb6f1f67f1bcd037.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="lending_project" data-themes="" data-resource-suffix="" data-rustdoc-version="1.73.0 (cc66ad468 2023-10-03)" data-channel="1.73.0" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-1596385f77d47ef2.css" data-theme-dark-css="dark-0a43001d3fc2282c.css" data-theme-ayu-css="ayu-fd19013d6ce078bf.css" ><script src="../../../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-1596385f77d47ef2.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-0a43001d3fc2282c.css"><link rel="stylesheet" href="../../../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc trait"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../../../lending_project/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../../../lending_project/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">LendingPoolManage</a></h2><div class="sidebar-elems"><section><h3><a href="#required-associated-types">Required Associated Types</a></h3><ul class="block"><li><a href="#associatedtype.addMarketRuleOutput">addMarketRuleOutput</a></li><li><a href="#associatedtype.modifyAssetRuleOutput">modifyAssetRuleOutput</a></li><li><a href="#associatedtype.registerAssetOutput">registerAssetOutput</a></li><li><a href="#associatedtype.registerStablecoinOutput">registerStablecoinOutput</a></li><li><a href="#associatedtype.setBlockTimestampProviderOutput">setBlockTimestampProviderOutput</a></li><li><a href="#associatedtype.setFlashLoanFeeE6Output">setFlashLoanFeeE6Output</a></li><li><a href="#associatedtype.setPriceFeedProviderOutput">setPriceFeedProviderOutput</a></li><li><a href="#associatedtype.setReserveIsActiveOutput">setReserveIsActiveOutput</a></li><li><a href="#associatedtype.setReserveIsFreezedOutput">setReserveIsFreezedOutput</a></li><li><a href="#associatedtype.setReserveParametersOutput">setReserveParametersOutput</a></li><li><a href="#associatedtype.setReserveRestrictionsOutput">setReserveRestrictionsOutput</a></li><li><a href="#associatedtype.setStablecoinDebtRateE24Output">setStablecoinDebtRateE24Output</a></li><li><a href="#associatedtype.takeProtocolIncomeOutput">takeProtocolIncomeOutput</a></li></ul><h3><a href="#required-methods">Required Methods</a></h3><ul class="block"><li><a href="#tymethod.add_market_rule">add_market_rule</a></li><li><a href="#tymethod.modify_asset_rule">modify_asset_rule</a></li><li><a href="#tymethod.register_asset">register_asset</a></li><li><a href="#tymethod.register_stablecoin">register_stablecoin</a></li><li><a href="#tymethod.set_block_timestamp_provider">set_block_timestamp_provider</a></li><li><a href="#tymethod.set_flash_loan_fee_e6">set_flash_loan_fee_e6</a></li><li><a href="#tymethod.set_price_feed_provider">set_price_feed_provider</a></li><li><a href="#tymethod.set_reserve_is_active">set_reserve_is_active</a></li><li><a href="#tymethod.set_reserve_is_freezed">set_reserve_is_freezed</a></li><li><a href="#tymethod.set_reserve_parameters">set_reserve_parameters</a></li><li><a href="#tymethod.set_reserve_restrictions">set_reserve_restrictions</a></li><li><a href="#tymethod.set_stablecoin_debt_rate_e24">set_stablecoin_debt_rate_e24</a></li><li><a href="#tymethod.take_protocol_income">take_protocol_income</a></li></ul><h3><a href="#foreign-impls">Implementations on Foreign Types</a></h3><ul class="block"><li><a href="#impl-LendingPoolManage-for-TraitDefinitionRegistry%3CE%3E">TraitDefinitionRegistry&lt;E&gt;</a></li></ul><h3><a href="#implementors">Implementors</a></h3></section><h2><a href="index.html">In lending_project::traits::lending_pool</a></h2></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Trait <a href="../../index.html">lending_project</a>::<wbr><a href="../index.html">traits</a>::<wbr><a href="index.html">lending_pool</a>::<wbr><a class="trait" href="#">LendingPoolManage</a><button id="copy-path" title="Copy item path to clipboard"><img src="../../../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#4">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>pub trait LendingPoolManage: ContractEnv {
+<details class="toggle type-contents-toggle"><summary class="hideme"><span>Show 26 associated items</span></summary>    type <a href="#associatedtype.setPriceFeedProviderOutput" class="associatedtype">setPriceFeedProviderOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.setFlashLoanFeeE6Output" class="associatedtype">setFlashLoanFeeE6Output</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.setBlockTimestampProviderOutput" class="associatedtype">setBlockTimestampProviderOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.registerAssetOutput" class="associatedtype">registerAssetOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.registerStablecoinOutput" class="associatedtype">registerStablecoinOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.setReserveIsActiveOutput" class="associatedtype">setReserveIsActiveOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.setReserveIsFreezedOutput" class="associatedtype">setReserveIsFreezedOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.setReserveParametersOutput" class="associatedtype">setReserveParametersOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.setReserveRestrictionsOutput" class="associatedtype">setReserveRestrictionsOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.setStablecoinDebtRateE24Output" class="associatedtype">setStablecoinDebtRateE24Output</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.addMarketRuleOutput" class="associatedtype">addMarketRuleOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.modifyAssetRuleOutput" class="associatedtype">modifyAssetRuleOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+    type <a href="#associatedtype.takeProtocolIncomeOutput" class="associatedtype">takeProtocolIncomeOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="struct.Vec.html" title="struct lending_project::traits::lending_pool::Vec">Vec</a>&lt;(<a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>, <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.i128.html">i128</a>)&gt;, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;;
+
+    // Required methods
+    fn <a href="#tymethod.set_price_feed_provider" class="fn">set_price_feed_provider</a>(
+        &amp;mut self,
+        price_feed_provider: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setPriceFeedProviderOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setPriceFeedProviderOutput">setPriceFeedProviderOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.set_flash_loan_fee_e6" class="fn">set_flash_loan_fee_e6</a>(
+        &amp;mut self,
+        flash_loan_fee_e6: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setFlashLoanFeeE6Output" title="type lending_project::traits::lending_pool::LendingPoolManage::setFlashLoanFeeE6Output">setFlashLoanFeeE6Output</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.set_block_timestamp_provider" class="fn">set_block_timestamp_provider</a>(
+        &amp;mut self,
+        provider_address: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setBlockTimestampProviderOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setBlockTimestampProviderOutput">setBlockTimestampProviderOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.register_asset" class="fn">register_asset</a>(
+        &amp;mut self,
+        asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+        a_token_code_hash: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+        v_token_code_hash: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+        name: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+        symbol: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+        decimals: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>,
+        asset_rules: <a class="struct" href="struct.AssetRules.html" title="struct lending_project::traits::lending_pool::AssetRules">AssetRules</a>,
+        maximal_total_deposit: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+        maximal_total_debt: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+        minimal_collateral: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+        minimal_debt: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+        income_for_suppliers_part_e6: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>,
+        interest_rate_model: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">7</a>]
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.registerAssetOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::registerAssetOutput">registerAssetOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.register_stablecoin" class="fn">register_stablecoin</a>(
+        &amp;mut self,
+        asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+        a_token_code_hash: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+        v_token_code_hash: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+        name: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+        symbol: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+        decimals: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>,
+        asset_rules: <a class="struct" href="struct.AssetRules.html" title="struct lending_project::traits::lending_pool::AssetRules">AssetRules</a>,
+        maximal_total_deposit: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+        maximal_total_debt: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+        minimal_collateral: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+        minimal_debt: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.registerStablecoinOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::registerStablecoinOutput">registerStablecoinOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.set_reserve_is_active" class="fn">set_reserve_is_active</a>(
+        &amp;mut self,
+        asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+        active: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.bool.html">bool</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveIsActiveOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveIsActiveOutput">setReserveIsActiveOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.set_reserve_is_freezed" class="fn">set_reserve_is_freezed</a>(
+        &amp;mut self,
+        asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+        freeze: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.bool.html">bool</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveIsFreezedOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveIsFreezedOutput">setReserveIsFreezedOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.set_reserve_parameters" class="fn">set_reserve_parameters</a>(
+        &amp;mut self,
+        asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+        interest_rate_model: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">7</a>],
+        income_for_suppliers_part_e6: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveParametersOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveParametersOutput">setReserveParametersOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.set_reserve_restrictions" class="fn">set_reserve_restrictions</a>(
+        &amp;mut self,
+        asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+        maximal_total_deposit: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+        maximal_total_debt: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+        minimal_collateral: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+        minimal_debt: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveRestrictionsOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveRestrictionsOutput">setReserveRestrictionsOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.set_stablecoin_debt_rate_e24" class="fn">set_stablecoin_debt_rate_e24</a>(
+        &amp;mut self,
+        asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+        debt_rate_e24: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setStablecoinDebtRateE24Output" title="type lending_project::traits::lending_pool::LendingPoolManage::setStablecoinDebtRateE24Output">setStablecoinDebtRateE24Output</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.add_market_rule" class="fn">add_market_rule</a>(
+        &amp;mut self,
+        market_rule: <a class="type" href="type.MarketRule.html" title="type lending_project::traits::lending_pool::MarketRule">MarketRule</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.addMarketRuleOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::addMarketRuleOutput">addMarketRuleOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.modify_asset_rule" class="fn">modify_asset_rule</a>(
+        &amp;mut self,
+        market_rule_id: <a class="type" href="type.RuleId.html" title="type lending_project::traits::lending_pool::RuleId">RuleId</a>,
+        asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+        asset_rules: <a class="struct" href="struct.AssetRules.html" title="struct lending_project::traits::lending_pool::AssetRules">AssetRules</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.modifyAssetRuleOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::modifyAssetRuleOutput">modifyAssetRuleOutput</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.take_protocol_income" class="fn">take_protocol_income</a>(
+        &amp;mut self,
+        assets: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="struct.Vec.html" title="struct lending_project::traits::lending_pool::Vec">Vec</a>&lt;<a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>&gt;&gt;,
+        to: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>
+    ) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.takeProtocolIncomeOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::takeProtocolIncomeOutput">takeProtocolIncomeOutput</a>;
+</details>}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Trait containing <code>AccessControl</code> messages used to manage ‘LendingPool’ parameters. USed by <strong>managers</strong>.</p>
+</div></details><h2 id="required-associated-types" class="small-section-header">Required Associated Types<a href="#required-associated-types" class="anchor">§</a></h2><div class="methods"><details class="toggle" open><summary><section id="associatedtype.setPriceFeedProviderOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#7">source</a><h4 class="code-header">type <a href="#associatedtype.setPriceFeedProviderOutput" class="associatedtype">setPriceFeedProviderOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.setFlashLoanFeeE6Output" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#19">source</a><h4 class="code-header">type <a href="#associatedtype.setFlashLoanFeeE6Output" class="associatedtype">setFlashLoanFeeE6Output</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.setBlockTimestampProviderOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#31">source</a><h4 class="code-header">type <a href="#associatedtype.setBlockTimestampProviderOutput" class="associatedtype">setBlockTimestampProviderOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.registerAssetOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#39">source</a><h4 class="code-header">type <a href="#associatedtype.registerAssetOutput" class="associatedtype">registerAssetOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.registerStablecoinOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#77">source</a><h4 class="code-header">type <a href="#associatedtype.registerStablecoinOutput" class="associatedtype">registerStablecoinOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.setReserveIsActiveOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#111">source</a><h4 class="code-header">type <a href="#associatedtype.setReserveIsActiveOutput" class="associatedtype">setReserveIsActiveOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.setReserveIsFreezedOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#125">source</a><h4 class="code-header">type <a href="#associatedtype.setReserveIsFreezedOutput" class="associatedtype">setReserveIsFreezedOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.setReserveParametersOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#139">source</a><h4 class="code-header">type <a href="#associatedtype.setReserveParametersOutput" class="associatedtype">setReserveParametersOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.setReserveRestrictionsOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#155">source</a><h4 class="code-header">type <a href="#associatedtype.setReserveRestrictionsOutput" class="associatedtype">setReserveRestrictionsOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.setStablecoinDebtRateE24Output" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#175">source</a><h4 class="code-header">type <a href="#associatedtype.setStablecoinDebtRateE24Output" class="associatedtype">setStablecoinDebtRateE24Output</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.addMarketRuleOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#190">source</a><h4 class="code-header">type <a href="#associatedtype.addMarketRuleOutput" class="associatedtype">addMarketRuleOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.modifyAssetRuleOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#203">source</a><h4 class="code-header">type <a href="#associatedtype.modifyAssetRuleOutput" class="associatedtype">modifyAssetRuleOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.takeProtocolIncomeOutput" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#219">source</a><h4 class="code-header">type <a href="#associatedtype.takeProtocolIncomeOutput" class="associatedtype">takeProtocolIncomeOutput</a>: ImpliesReturn&lt;<a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="struct.Vec.html" title="struct lending_project::traits::lending_pool::Vec">Vec</a>&lt;(<a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>, <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.i128.html">i128</a>)&gt;, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Output type of the respective trait message.</p>
+</div></details></div><h2 id="required-methods" class="small-section-header">Required Methods<a href="#required-methods" class="anchor">§</a></h2><div class="methods"><details class="toggle method-toggle" open><summary><section id="tymethod.set_price_feed_provider" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#7">source</a><h4 class="code-header">fn <a href="#tymethod.set_price_feed_provider" class="fn">set_price_feed_provider</a>(
+    &amp;mut self,
+    price_feed_provider: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setPriceFeedProviderOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setPriceFeedProviderOutput">setPriceFeedProviderOutput</a></h4></section></summary><div class="docblock"><p>Sets a <code>price_feed_provider</code> - a contract that implements PriceFeed and will be used to get prices from.</p>
+<ul>
+<li><code>price_feed_provider</code> AccountId (a.k.a. address) of a contract.</li>
+</ul>
+<h5 id="errors"><a href="#errors">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a PARAMETERS_ADMIN.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.set_flash_loan_fee_e6" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#19">source</a><h4 class="code-header">fn <a href="#tymethod.set_flash_loan_fee_e6" class="fn">set_flash_loan_fee_e6</a>(
+    &amp;mut self,
+    flash_loan_fee_e6: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setFlashLoanFeeE6Output" title="type lending_project::traits::lending_pool::LendingPoolManage::setFlashLoanFeeE6Output">setFlashLoanFeeE6Output</a></h4></section></summary><div class="docblock"><p>Sets a <code>flash_loan_fee_e6</code></p>
+<ul>
+<li><code>flash_loan_fee_e6</code> fee to set 1_000_000 = 100% fee.</li>
+</ul>
+<h5 id="errors-1"><a href="#errors-1">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a PARAMETERS_ADMIN.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.set_block_timestamp_provider" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#31">source</a><h4 class="code-header">fn <a href="#tymethod.set_block_timestamp_provider" class="fn">set_block_timestamp_provider</a>(
+    &amp;mut self,
+    provider_address: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setBlockTimestampProviderOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setBlockTimestampProviderOutput">setBlockTimestampProviderOutput</a></h4></section></summary><div class="docblock"><p>only for tests
+sets provider of block_timestamp</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.register_asset" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#39">source</a><h4 class="code-header">fn <a href="#tymethod.register_asset" class="fn">register_asset</a>(
+    &amp;mut self,
+    asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    a_token_code_hash: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+    v_token_code_hash: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+    name: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    symbol: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    decimals: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>,
+    asset_rules: <a class="struct" href="struct.AssetRules.html" title="struct lending_project::traits::lending_pool::AssetRules">AssetRules</a>,
+    maximal_total_deposit: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    maximal_total_debt: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    minimal_collateral: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+    minimal_debt: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+    income_for_suppliers_part_e6: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>,
+    interest_rate_model: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">7</a>]
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.registerAssetOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::registerAssetOutput">registerAssetOutput</a></h4></section></summary><div class="docblock"><p>Registers new asset in the <code>LendingPool</code>’s storage and instaniates ‘AToken’ and ‘VToken’ for the reserve.</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered asset</li>
+<li><code>a_token_code_hash</code> - code hash that will be used to initialize <code>AToken</code></li>
+<li><code>v_token_code_hash</code> - code hash that will be used to initialize <code>vToken</code></li>
+<li><code>name</code> - name of the <code>asset</code>. It will be used to create names for <code>AToken</code> and <code>VToken</code>.</li>
+<li><code>symbol</code> - symbol of the <code>asset</code>. It will be used to create sumbol for <code>AToken</code> and <code>VToken</code>.</li>
+<li><code>decimals</code> - a decimal denominator of an asset (number already multiplied by 10^N where N is number of decimals)</li>
+<li><code>asset_rules' - </code>asset`’s AssetRules that will be used in default market rule (id = 0).</li>
+<li><code>maximal_total_deposit</code> - maximal allowed total deposit. None for uncapped.</li>
+<li><code>maximal_total_debt</code> - maximal allowed total debt. None for uncapped.</li>
+<li><code>minimal_collateral</code> - the required minimal deposit of the asset by user to turn asset to be collateral.</li>
+<li><code>minimal_debt</code> - the minimal possible debt that can be taken by user.</li>
+<li><code>interest_rate_model</code> - targetted debt rates at utilization of 68%, 84%, 92%, 96%, 98%, 99% 100%</li>
+<li><code>income_for_suppliers_part_e6</code> - indicates which part of an income should suppliers be paid - in E6 notation (multiplied by 10^6)</li>
+</ul>
+<h5 id="errors-2"><a href="#errors-2">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a ASSET_LISTING_ADMIN.</li>
+<li><code>AlreadyRegistered</code> returned if asset was already registered.</li>
+<li><code>InvalidAssetRule</code> returned if asset rule is invalid.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.register_stablecoin" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#77">source</a><h4 class="code-header">fn <a href="#tymethod.register_stablecoin" class="fn">register_stablecoin</a>(
+    &amp;mut self,
+    asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    a_token_code_hash: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+    v_token_code_hash: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+    name: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    symbol: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    decimals: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>,
+    asset_rules: <a class="struct" href="struct.AssetRules.html" title="struct lending_project::traits::lending_pool::AssetRules">AssetRules</a>,
+    maximal_total_deposit: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    maximal_total_debt: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    minimal_collateral: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+    minimal_debt: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.registerStablecoinOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::registerStablecoinOutput">registerStablecoinOutput</a></h4></section></summary><div class="docblock"><p>Registers new Abax native Stable asset in the <code>LendingPool</code>’s storage and instaniates ‘AToken’ and ‘VToken’ for the reserve.</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered asset</li>
+<li><code>a_token_code_hash</code> - code hash that will be used to initialize <code>AToken</code></li>
+<li><code>v_token_code_hash</code> - code hash that will be used to initialize <code>vToken</code></li>
+<li><code>name</code> - name of the <code>asset</code>. It will be used to create names for <code>AToken</code> and <code>VToken</code>.</li>
+<li><code>symbol</code> - symbol of the <code>asset</code>. It will be used to create sumbol for <code>AToken</code> and <code>VToken</code>.</li>
+<li><code>decimals</code> - a decimal denominator of an asset (number already multiplied by 10^N where N is number of decimals)</li>
+<li><code>asset_rules' - </code>asset`’s AssetRules that will be used in default market rule (id = 0).</li>
+<li><code>maximal_total_deposit</code> - maximal allowed total deposit. None for uncapped.</li>
+<li><code>maximal_total_debt</code> - maximal allowed total debt. None for uncapped.</li>
+<li><code>minimal_collateral</code> - the required minimal deposit of the asset by user to turn asset to be collateral.</li>
+<li><code>minimal_debt</code> - the minimal possible debt that can be taken by user.</li>
+</ul>
+<h5 id="errors-3"><a href="#errors-3">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a ASSET_LISTING_ADMIN.</li>
+<li><code>AlreadyRegistered</code> returned if asset was already registered.</li>
+<li><code>InvalidAssetRule</code> returned if asset rule is invalid.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.set_reserve_is_active" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#111">source</a><h4 class="code-header">fn <a href="#tymethod.set_reserve_is_active" class="fn">set_reserve_is_active</a>(
+    &amp;mut self,
+    asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    active: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.bool.html">bool</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveIsActiveOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveIsActiveOutput">setReserveIsActiveOutput</a></h4></section></summary><div class="docblock"><p>activates or disactivates reserve</p>
+<ul>
+<li><code>active</code> - true if reserve should be activated. False if reserve should be disactivated.</li>
+</ul>
+<h5 id="errors-4"><a href="#errors-4">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a EMERGENCY_ADMIN.</li>
+<li><code>AlreadySet</code> returned if trying to set already set state.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.set_reserve_is_freezed" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#125">source</a><h4 class="code-header">fn <a href="#tymethod.set_reserve_is_freezed" class="fn">set_reserve_is_freezed</a>(
+    &amp;mut self,
+    asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    freeze: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.bool.html">bool</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveIsFreezedOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveIsFreezedOutput">setReserveIsFreezedOutput</a></h4></section></summary><div class="docblock"><p>Freezes or unfreezes reserve</p>
+<ul>
+<li><code>freeze</code> - true if reserve should be freezed. False if reserve should be unfreezed.</li>
+</ul>
+<h5 id="errors-5"><a href="#errors-5">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a EMERGENCY_ADMIN.</li>
+<li><code>AlreadySet</code> returned if trying to set already set state.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.set_reserve_parameters" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#139">source</a><h4 class="code-header">fn <a href="#tymethod.set_reserve_parameters" class="fn">set_reserve_parameters</a>(
+    &amp;mut self,
+    asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    interest_rate_model: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">7</a>],
+    income_for_suppliers_part_e6: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveParametersOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveParametersOutput">setReserveParametersOutput</a></h4></section></summary><div class="docblock"><p>modifies ReserveParameters in the <code>LendingPool</code>’s storage</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered asset</li>
+<li><code>interest_rate_model</code> - targetted debt rates at utilization of 50%, 60%, 70%, 80%, 90%, 95% 100%</li>
+<li><code>income_for_suppliers_part_e6</code> - indicates which part of an income should suppliers be paid - in E6 notation (multiplied by 10^6)</li>
+</ul>
+<h5 id="errors-6"><a href="#errors-6">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a PARAMETERS_ADMIN.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.set_reserve_restrictions" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#155">source</a><h4 class="code-header">fn <a href="#tymethod.set_reserve_restrictions" class="fn">set_reserve_restrictions</a>(
+    &amp;mut self,
+    asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    maximal_total_deposit: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    maximal_total_debt: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    minimal_collateral: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+    minimal_debt: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveRestrictionsOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveRestrictionsOutput">setReserveRestrictionsOutput</a></h4></section></summary><div class="docblock"><p>modifies ReserveRestricion in the <code>LendingPool</code>’s storage</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered asset</li>
+<li><code>maximal_total_deposit</code> - maximal allowed total deposit, If exceeded no more deposits are accepted. None for uncapped total deposit.</li>
+<li><code>maximal_total_debt</code> - maximal allowed total debt, If exceeded no more borrows are accepted. None for uncapped total debt.</li>
+<li><code>minimal_collateral</code> - the required minimal deposit of the asset by user to turn asset to be collateral.</li>
+<li><code>minimal_debt</code> - the minimal possible debt that can be taken by user.</li>
+</ul>
+<h5 id="errors-7"><a href="#errors-7">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a PARAMETERS_ADMIN.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.set_stablecoin_debt_rate_e24" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#175">source</a><h4 class="code-header">fn <a href="#tymethod.set_stablecoin_debt_rate_e24" class="fn">set_stablecoin_debt_rate_e24</a>(
+    &amp;mut self,
+    asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    debt_rate_e24: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setStablecoinDebtRateE24Output" title="type lending_project::traits::lending_pool::LendingPoolManage::setStablecoinDebtRateE24Output">setStablecoinDebtRateE24Output</a></h4></section></summary><div class="docblock"><p>modifies the stablecoin debt rate</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered stable asset</li>
+<li><code>debt_rate_e24</code> - new debt rate</li>
+</ul>
+<h5 id="errors-8"><a href="#errors-8">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a STABLECOIN_RATE_ADMIN.</li>
+<li><code>AssetIsNotProtocolStablecoin</code> returned if <code>asset</code> is not abax native stablecoin.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.add_market_rule" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#190">source</a><h4 class="code-header">fn <a href="#tymethod.add_market_rule" class="fn">add_market_rule</a>(
+    &amp;mut self,
+    market_rule: <a class="type" href="type.MarketRule.html" title="type lending_project::traits::lending_pool::MarketRule">MarketRule</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.addMarketRuleOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::addMarketRuleOutput">addMarketRuleOutput</a></h4></section></summary><div class="docblock"><p>adds new market rule at next martket rule id</p>
+<ul>
+<li><code>market_rule</code> - list of asset rules for that market rule</li>
+</ul>
+<h5 id="errors-9"><a href="#errors-9">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a STABLECOIN_RATE_ADMIN.</li>
+<li><code>InvalidAssetRule</code> returned if the <code>market_rule</code> contains invalid AssetRule.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.modify_asset_rule" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#203">source</a><h4 class="code-header">fn <a href="#tymethod.modify_asset_rule" class="fn">modify_asset_rule</a>(
+    &amp;mut self,
+    market_rule_id: <a class="type" href="type.RuleId.html" title="type lending_project::traits::lending_pool::RuleId">RuleId</a>,
+    asset: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    asset_rules: <a class="struct" href="struct.AssetRules.html" title="struct lending_project::traits::lending_pool::AssetRules">AssetRules</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.modifyAssetRuleOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::modifyAssetRuleOutput">modifyAssetRuleOutput</a></h4></section></summary><div class="docblock"><p>modifies asset_rules of a given asset in the market rule identified by market_rule_id</p>
+<ul>
+<li><code>market_rule_id</code> - id of market rule which shuuld be modified</li>
+<li><code>asset</code> - <code>AccountId</code> of a asset which rules should be modified</li>
+<li><code>asset_rules' - </code>asset<code>'s AssetRules that will be used in  market rule with </code>market_rule_id`.</li>
+</ul>
+<h5 id="errors-10"><a href="#errors-10">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a STABLECOIN_RATE_ADMIN.</li>
+<li><code>InvalidAssetRule</code> returned if the asset_rules is invalid.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.take_protocol_income" class="method"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#219">source</a><h4 class="code-header">fn <a href="#tymethod.take_protocol_income" class="fn">take_protocol_income</a>(
+    &amp;mut self,
+    assets: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="struct.Vec.html" title="struct lending_project::traits::lending_pool::Vec">Vec</a>&lt;<a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>&gt;&gt;,
+    to: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.takeProtocolIncomeOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::takeProtocolIncomeOutput">takeProtocolIncomeOutput</a></h4></section></summary><div class="docblock"><p>collects income generated by the protocol</p>
+<ul>
+<li><code>assets</code> - vector of assets that income should be taken. If None takes income from all registered assets.</li>
+<li><code>to</code> - account which will receive income.</li>
+</ul>
+<h5 id="errors-11"><a href="#errors-11">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a TREASURY.</li>
+</ul>
+</div></details></div><h2 id="foreign-impls" class="small-section-header">Implementations on Foreign Types<a href="#foreign-impls" class="anchor">§</a></h2><details class="toggle implementors-toggle"><summary><section id="impl-LendingPoolManage-for-TraitDefinitionRegistry%3CE%3E" class="impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#4">source</a><a href="#impl-LendingPoolManage-for-TraitDefinitionRegistry%3CE%3E" class="anchor">§</a><h3 class="code-header">impl&lt;E&gt; <a class="trait" href="trait.LendingPoolManage.html" title="trait lending_project::traits::lending_pool::LendingPoolManage">LendingPoolManage</a> for TraitDefinitionRegistry&lt;E&gt;<span class="where fmt-newline">where
+    E: Environment,</span></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.set_price_feed_provider" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#7">source</a><a href="#method.set_price_feed_provider" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.set_price_feed_provider" class="fn">set_price_feed_provider</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setPriceFeedProviderOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setPriceFeedProviderOutput">setPriceFeedProviderOutput</a></h4></section></summary><div class="docblock"><p>Sets a <code>price_feed_provider</code> - a contract that implements PriceFeed and will be used to get prices from.</p>
+<ul>
+<li><code>price_feed_provider</code> AccountId (a.k.a. address) of a contract.</li>
+</ul>
+<h5 id="errors-12"><a href="#errors-12">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a PARAMETERS_ADMIN.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.set_flash_loan_fee_e6" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#19">source</a><a href="#method.set_flash_loan_fee_e6" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.set_flash_loan_fee_e6" class="fn">set_flash_loan_fee_e6</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setFlashLoanFeeE6Output" title="type lending_project::traits::lending_pool::LendingPoolManage::setFlashLoanFeeE6Output">setFlashLoanFeeE6Output</a></h4></section></summary><div class="docblock"><p>Sets a <code>flash_loan_fee_e6</code></p>
+<ul>
+<li><code>flash_loan_fee_e6</code> fee to set 1_000_000 = 100% fee.</li>
+</ul>
+<h5 id="errors-13"><a href="#errors-13">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a PARAMETERS_ADMIN.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.set_block_timestamp_provider" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#31">source</a><a href="#method.set_block_timestamp_provider" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.set_block_timestamp_provider" class="fn">set_block_timestamp_provider</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setBlockTimestampProviderOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setBlockTimestampProviderOutput">setBlockTimestampProviderOutput</a></h4></section></summary><div class="docblock"><p>only for tests
+sets provider of block_timestamp</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.register_asset" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#39">source</a><a href="#method.register_asset" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.register_asset" class="fn">register_asset</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    __ink_binding_1: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+    __ink_binding_2: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+    __ink_binding_3: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    __ink_binding_4: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    __ink_binding_5: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>,
+    __ink_binding_6: <a class="struct" href="struct.AssetRules.html" title="struct lending_project::traits::lending_pool::AssetRules">AssetRules</a>,
+    __ink_binding_7: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    __ink_binding_8: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    __ink_binding_9: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+    __ink_binding_10: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+    __ink_binding_11: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>,
+    __ink_binding_12: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">7</a>]
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.registerAssetOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::registerAssetOutput">registerAssetOutput</a></h4></section></summary><div class="docblock"><p>Registers new asset in the <code>LendingPool</code>’s storage and instaniates ‘AToken’ and ‘VToken’ for the reserve.</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered asset</li>
+<li><code>a_token_code_hash</code> - code hash that will be used to initialize <code>AToken</code></li>
+<li><code>v_token_code_hash</code> - code hash that will be used to initialize <code>vToken</code></li>
+<li><code>name</code> - name of the <code>asset</code>. It will be used to create names for <code>AToken</code> and <code>VToken</code>.</li>
+<li><code>symbol</code> - symbol of the <code>asset</code>. It will be used to create sumbol for <code>AToken</code> and <code>VToken</code>.</li>
+<li><code>decimals</code> - a decimal denominator of an asset (number already multiplied by 10^N where N is number of decimals)</li>
+<li><code>asset_rules' - </code>asset`’s AssetRules that will be used in default market rule (id = 0).</li>
+<li><code>maximal_total_deposit</code> - maximal allowed total deposit. None for uncapped.</li>
+<li><code>maximal_total_debt</code> - maximal allowed total debt. None for uncapped.</li>
+<li><code>minimal_collateral</code> - the required minimal deposit of the asset by user to turn asset to be collateral.</li>
+<li><code>minimal_debt</code> - the minimal possible debt that can be taken by user.</li>
+<li><code>interest_rate_model</code> - targetted debt rates at utilization of 68%, 84%, 92%, 96%, 98%, 99% 100%</li>
+<li><code>income_for_suppliers_part_e6</code> - indicates which part of an income should suppliers be paid - in E6 notation (multiplied by 10^6)</li>
+</ul>
+<h5 id="errors-14"><a href="#errors-14">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a ASSET_LISTING_ADMIN.</li>
+<li><code>AlreadyRegistered</code> returned if asset was already registered.</li>
+<li><code>InvalidAssetRule</code> returned if asset rule is invalid.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.register_stablecoin" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#77">source</a><a href="#method.register_stablecoin" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.register_stablecoin" class="fn">register_stablecoin</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    __ink_binding_1: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+    __ink_binding_2: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">32</a>],
+    __ink_binding_3: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    __ink_binding_4: <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
+    __ink_binding_5: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u8.html">u8</a>,
+    __ink_binding_6: <a class="struct" href="struct.AssetRules.html" title="struct lending_project::traits::lending_pool::AssetRules">AssetRules</a>,
+    __ink_binding_7: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    __ink_binding_8: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    __ink_binding_9: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+    __ink_binding_10: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.registerStablecoinOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::registerStablecoinOutput">registerStablecoinOutput</a></h4></section></summary><div class="docblock"><p>Registers new Abax native Stable asset in the <code>LendingPool</code>’s storage and instaniates ‘AToken’ and ‘VToken’ for the reserve.</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered asset</li>
+<li><code>a_token_code_hash</code> - code hash that will be used to initialize <code>AToken</code></li>
+<li><code>v_token_code_hash</code> - code hash that will be used to initialize <code>vToken</code></li>
+<li><code>name</code> - name of the <code>asset</code>. It will be used to create names for <code>AToken</code> and <code>VToken</code>.</li>
+<li><code>symbol</code> - symbol of the <code>asset</code>. It will be used to create sumbol for <code>AToken</code> and <code>VToken</code>.</li>
+<li><code>decimals</code> - a decimal denominator of an asset (number already multiplied by 10^N where N is number of decimals)</li>
+<li><code>asset_rules' - </code>asset`’s AssetRules that will be used in default market rule (id = 0).</li>
+<li><code>maximal_total_deposit</code> - maximal allowed total deposit. None for uncapped.</li>
+<li><code>maximal_total_debt</code> - maximal allowed total debt. None for uncapped.</li>
+<li><code>minimal_collateral</code> - the required minimal deposit of the asset by user to turn asset to be collateral.</li>
+<li><code>minimal_debt</code> - the minimal possible debt that can be taken by user.</li>
+</ul>
+<h5 id="errors-15"><a href="#errors-15">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a ASSET_LISTING_ADMIN.</li>
+<li><code>AlreadyRegistered</code> returned if asset was already registered.</li>
+<li><code>InvalidAssetRule</code> returned if asset rule is invalid.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.set_reserve_is_active" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#111">source</a><a href="#method.set_reserve_is_active" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.set_reserve_is_active" class="fn">set_reserve_is_active</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    __ink_binding_1: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.bool.html">bool</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveIsActiveOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveIsActiveOutput">setReserveIsActiveOutput</a></h4></section></summary><div class="docblock"><p>activates or disactivates reserve</p>
+<ul>
+<li><code>active</code> - true if reserve should be activated. False if reserve should be disactivated.</li>
+</ul>
+<h5 id="errors-16"><a href="#errors-16">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a EMERGENCY_ADMIN.</li>
+<li><code>AlreadySet</code> returned if trying to set already set state.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.set_reserve_is_freezed" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#125">source</a><a href="#method.set_reserve_is_freezed" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.set_reserve_is_freezed" class="fn">set_reserve_is_freezed</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    __ink_binding_1: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.bool.html">bool</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveIsFreezedOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveIsFreezedOutput">setReserveIsFreezedOutput</a></h4></section></summary><div class="docblock"><p>Freezes or unfreezes reserve</p>
+<ul>
+<li><code>freeze</code> - true if reserve should be freezed. False if reserve should be unfreezed.</li>
+</ul>
+<h5 id="errors-17"><a href="#errors-17">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a EMERGENCY_ADMIN.</li>
+<li><code>AlreadySet</code> returned if trying to set already set state.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.set_reserve_parameters" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#139">source</a><a href="#method.set_reserve_parameters" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.set_reserve_parameters" class="fn">set_reserve_parameters</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    __ink_binding_1: [<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>; <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.array.html">7</a>],
+    __ink_binding_2: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveParametersOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveParametersOutput">setReserveParametersOutput</a></h4></section></summary><div class="docblock"><p>modifies ReserveParameters in the <code>LendingPool</code>’s storage</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered asset</li>
+<li><code>interest_rate_model</code> - targetted debt rates at utilization of 50%, 60%, 70%, 80%, 90%, 95% 100%</li>
+<li><code>income_for_suppliers_part_e6</code> - indicates which part of an income should suppliers be paid - in E6 notation (multiplied by 10^6)</li>
+</ul>
+<h5 id="errors-18"><a href="#errors-18">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a PARAMETERS_ADMIN.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.set_reserve_restrictions" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#155">source</a><a href="#method.set_reserve_restrictions" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.set_reserve_restrictions" class="fn">set_reserve_restrictions</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    __ink_binding_1: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    __ink_binding_2: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>&gt;,
+    __ink_binding_3: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>,
+    __ink_binding_4: <a class="type" href="type.Balance.html" title="type lending_project::traits::lending_pool::Balance">Balance</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setReserveRestrictionsOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::setReserveRestrictionsOutput">setReserveRestrictionsOutput</a></h4></section></summary><div class="docblock"><p>modifies ReserveRestricion in the <code>LendingPool</code>’s storage</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered asset</li>
+<li><code>maximal_total_deposit</code> - maximal allowed total deposit, If exceeded no more deposits are accepted. None for uncapped total deposit.</li>
+<li><code>maximal_total_debt</code> - maximal allowed total debt, If exceeded no more borrows are accepted. None for uncapped total debt.</li>
+<li><code>minimal_collateral</code> - the required minimal deposit of the asset by user to turn asset to be collateral.</li>
+<li><code>minimal_debt</code> - the minimal possible debt that can be taken by user.</li>
+</ul>
+<h5 id="errors-19"><a href="#errors-19">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a PARAMETERS_ADMIN.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.set_stablecoin_debt_rate_e24" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#175">source</a><a href="#method.set_stablecoin_debt_rate_e24" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.set_stablecoin_debt_rate_e24" class="fn">set_stablecoin_debt_rate_e24</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    __ink_binding_1: <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.u128.html">u128</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.setStablecoinDebtRateE24Output" title="type lending_project::traits::lending_pool::LendingPoolManage::setStablecoinDebtRateE24Output">setStablecoinDebtRateE24Output</a></h4></section></summary><div class="docblock"><p>modifies the stablecoin debt rate</p>
+<ul>
+<li><code>asset</code> - <code>AccountId</code> of the registered stable asset</li>
+<li><code>debt_rate_e24</code> - new debt rate</li>
+</ul>
+<h5 id="errors-20"><a href="#errors-20">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a STABLECOIN_RATE_ADMIN.</li>
+<li><code>AssetIsNotProtocolStablecoin</code> returned if <code>asset</code> is not abax native stablecoin.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.add_market_rule" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#190">source</a><a href="#method.add_market_rule" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.add_market_rule" class="fn">add_market_rule</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.MarketRule.html" title="type lending_project::traits::lending_pool::MarketRule">MarketRule</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.addMarketRuleOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::addMarketRuleOutput">addMarketRuleOutput</a></h4></section></summary><div class="docblock"><p>adds new market rule at next martket rule id</p>
+<ul>
+<li><code>market_rule</code> - list of asset rules for that market rule</li>
+</ul>
+<h5 id="errors-21"><a href="#errors-21">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a STABLECOIN_RATE_ADMIN.</li>
+<li><code>InvalidAssetRule</code> returned if the <code>market_rule</code> contains invalid AssetRule.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.modify_asset_rule" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#203">source</a><a href="#method.modify_asset_rule" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.modify_asset_rule" class="fn">modify_asset_rule</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="type" href="type.RuleId.html" title="type lending_project::traits::lending_pool::RuleId">RuleId</a>,
+    __ink_binding_1: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>,
+    __ink_binding_2: <a class="struct" href="struct.AssetRules.html" title="struct lending_project::traits::lending_pool::AssetRules">AssetRules</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.modifyAssetRuleOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::modifyAssetRuleOutput">modifyAssetRuleOutput</a></h4></section></summary><div class="docblock"><p>modifies asset_rules of a given asset in the market rule identified by market_rule_id</p>
+<ul>
+<li><code>market_rule_id</code> - id of market rule which shuuld be modified</li>
+<li><code>asset</code> - <code>AccountId</code> of a asset which rules should be modified</li>
+<li><code>asset_rules' - </code>asset<code>'s AssetRules that will be used in  market rule with </code>market_rule_id`.</li>
+</ul>
+<h5 id="errors-22"><a href="#errors-22">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a STABLECOIN_RATE_ADMIN.</li>
+<li><code>InvalidAssetRule</code> returned if the asset_rules is invalid.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.take_protocol_income" class="method trait-impl"><a class="src rightside" href="../../../src/lending_project/traits/lending_pool/manage.rs.html#219">source</a><a href="#method.take_protocol_income" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.take_protocol_income" class="fn">take_protocol_income</a>(
+    &amp;mut self,
+    __ink_binding_0: <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="struct.Vec.html" title="struct lending_project::traits::lending_pool::Vec">Vec</a>&lt;<a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>&gt;&gt;,
+    __ink_binding_1: <a class="type" href="type.AccountId.html" title="type lending_project::traits::lending_pool::AccountId">AccountId</a>
+) -&gt; Self::<a class="associatedtype" href="trait.LendingPoolManage.html#associatedtype.takeProtocolIncomeOutput" title="type lending_project::traits::lending_pool::LendingPoolManage::takeProtocolIncomeOutput">takeProtocolIncomeOutput</a></h4></section></summary><div class="docblock"><p>collects income generated by the protocol</p>
+<ul>
+<li><code>assets</code> - vector of assets that income should be taken. If None takes income from all registered assets.</li>
+<li><code>to</code> - account which will receive income.</li>
+</ul>
+<h5 id="errors-23"><a href="#errors-23">Errors</a></h5>
+<ul>
+<li><code>AccessControl::MisingRole</code> returned if the caller is not a TREASURY.</li>
+</ul>
+</div></details><section id="associatedtype.setPriceFeedProviderOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.setPriceFeedProviderOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.setPriceFeedProviderOutput" class="associatedtype">setPriceFeedProviderOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.setFlashLoanFeeE6Output-1" class="associatedtype trait-impl"><a href="#associatedtype.setFlashLoanFeeE6Output-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.setFlashLoanFeeE6Output" class="associatedtype">setFlashLoanFeeE6Output</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.setBlockTimestampProviderOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.setBlockTimestampProviderOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.setBlockTimestampProviderOutput" class="associatedtype">setBlockTimestampProviderOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.registerAssetOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.registerAssetOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.registerAssetOutput" class="associatedtype">registerAssetOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.registerStablecoinOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.registerStablecoinOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.registerStablecoinOutput" class="associatedtype">registerStablecoinOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.setReserveIsActiveOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.setReserveIsActiveOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.setReserveIsActiveOutput" class="associatedtype">setReserveIsActiveOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.setReserveIsFreezedOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.setReserveIsFreezedOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.setReserveIsFreezedOutput" class="associatedtype">setReserveIsFreezedOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.setReserveParametersOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.setReserveParametersOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.setReserveParametersOutput" class="associatedtype">setReserveParametersOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.setReserveRestrictionsOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.setReserveRestrictionsOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.setReserveRestrictionsOutput" class="associatedtype">setReserveRestrictionsOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.setStablecoinDebtRateE24Output-1" class="associatedtype trait-impl"><a href="#associatedtype.setStablecoinDebtRateE24Output-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.setStablecoinDebtRateE24Output" class="associatedtype">setStablecoinDebtRateE24Output</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.addMarketRuleOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.addMarketRuleOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.addMarketRuleOutput" class="associatedtype">addMarketRuleOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.modifyAssetRuleOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.modifyAssetRuleOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.modifyAssetRuleOutput" class="associatedtype">modifyAssetRuleOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.unit.html">()</a>, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section><section id="associatedtype.takeProtocolIncomeOutput-1" class="associatedtype trait-impl"><a href="#associatedtype.takeProtocolIncomeOutput-1" class="anchor">§</a><h4 class="code-header">type <a href="#associatedtype.takeProtocolIncomeOutput" class="associatedtype">takeProtocolIncomeOutput</a> = <a class="enum" href="https://doc.rust-lang.org/1.73.0/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="struct.Vec.html" title="struct lending_project::traits::lending_pool::Vec">Vec</a>&lt;(&lt;<a class="enum" href="enum.DefaultEnvironment.html" title="enum lending_project::traits::lending_pool::DefaultEnvironment">DefaultEnvironment</a> as Environment&gt;::AccountId, <a class="primitive" href="https://doc.rust-lang.org/1.73.0/std/primitive.i128.html">i128</a>), <a class="struct" href="https://doc.rust-lang.org/1.73.0/alloc/alloc/struct.Global.html" title="struct alloc::alloc::Global">Global</a>&gt;, <a class="enum" href="enum.LendingPoolError.html" title="enum lending_project::traits::lending_pool::LendingPoolError">LendingPoolError</a>&gt;</h4></section></div></details><h2 id="implementors" class="small-section-header">Implementors<a href="#implementors" class="anchor">§</a></h2><div id="implementors-list"></div><script src="../../../implementors/lending_project/traits/lending_pool/trait.LendingPoolManage.js" data-ignore-extern-crates="ink" async></script></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FlashLoanReceiverError"],"trait":["FlashLoanReceiver"],"type":["FlashLoanReceiverRef"]};
