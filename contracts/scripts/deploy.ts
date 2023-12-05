@@ -60,11 +60,27 @@ const deploy_oracleexample = async () => {
   })
 }
 
+const deploy_psp22 = async () => {
+  const initParams = await initPolkadotJs()
+  const { api, chain, account } = initParams
+
+  // Deploy greeter contract
+  const { abi, wasm } = await getDeploymentData('psp22')
+  const psp22 = await deployContract(api, account, abi, wasm, 'default', [])
+
+  // Write contract addresses to `{contract}/{network}.ts` file(s)
+  await writeContractAddresses(chain.network, {
+    psp22,
+  })
+}
+
 const deployContracts = async () => {
   try {
     await deploy_greeter()
 
     await deploy_oracleexample()
+
+    await deploy_psp22()
 
     console.log('\nDeployments completed successfully')
   } catch (error) {
