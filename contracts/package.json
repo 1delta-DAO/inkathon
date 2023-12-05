@@ -21,6 +21,7 @@
     "eslint": "eslint . --ext .js,.ts"
   },
   "devDependencies": {
+    "@acala-network/chopsticks": "^0.9.3",
     "@polkadot/api": "^10.10.1",
     "@polkadot/api-contract": "^10.10.1",
     "@polkadot/keyring": "^12.5.1",
