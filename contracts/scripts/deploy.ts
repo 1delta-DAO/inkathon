@@ -14,7 +14,7 @@ dotenv.config({
 })
 
 /**
- * Script that deploys the greeter contract and writes its address to a file.
+ * Script that deploys the contracts and writes its address to a file.
  *
  * Parameters:
  *  - `DIR`: Directory to read contract build artifacts (optional, defaults to `./deployments`)
@@ -24,7 +24,22 @@ dotenv.config({
  *  - `pnpm run deploy`
  *  - `CHAIN=alephzero-testnet pnpm run deploy`
  */
-const main = async () => {
+
+const deploy_greeter = async () => {
+  const initParams = await initPolkadotJs()
+  const { api, chain, account } = initParams
+
+  // Deploy greeter contract
+  const { abi, wasm } = await getDeploymentData('greeter')
+  const greeter = await deployContract(api, account, abi, wasm, 'default', [])
+
+  // Write contract addresses to `{contract}/{network}.ts` file(s)
+  await writeContractAddresses(chain.network, {
+    greeter,
+  })
+}
+
+const deploy_oracleexample = async () => {
   let oracleAddress = ''
   if (chainId == 'alephzero') {
     oracleAddress = PRICE_ORACLE_ADDRESS_MAINNET
@@ -32,11 +47,10 @@ const main = async () => {
     oracleAddress = PRICE_ORACLE_ADDRESS_TESTNET
   }
 
-  // [KEEP THIS] Initialization
-  const accountUri = process.env.ACCOUNT_URI || '//Alice'
-  const { api, chain, account } = await initPolkadotJs(chainId, accountUri)
+  // Initialization
+  const { api, chain, account } = await initPolkadotJs()
 
-  // Deploy greeter contract
+  // Deploy contract
   const { abi, wasm } = await getDeploymentData('oracleexample')
   const oracleexample = await deployContract(api, account, abi, wasm, 'new', [oracleAddress])
 
@@ -46,9 +60,19 @@ const main = async () => {
   })
 }
 
-main()
-  .catch((error) => {
+const deployContracts = async () => {
+  try {
+    await deploy_greeter()
+
+    await deploy_oracleexample()
+
+    console.log('\nDeployments completed successfully')
+  } catch (error) {
     console.error(error)
     process.exit(1)
-  })
-  .finally(() => process.exit(0))
+  } finally {
+    process.exit(0)
+  }
+}
+
+deployContracts()
