@@ -14,8 +14,15 @@
     "skipLibCheck": true,
     "allowJs": true,
     "baseUrl": ".",
-    "composite": true
+    "composite": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true
   },
   "exclude": ["./*/target"],
-  "include": ["./deployments/**/*.json", "./deployments/**/*.ts", "./scripts/**/*.ts"]
+  "include": [
+    "./deployments/**/*.json",
+    "./deployments/**/*.ts",
+    "./scripts/**/*.ts",
+    "./test/**/*.ts"
+  ]
 }
