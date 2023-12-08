@@ -8,3 +8,5 @@ pub mod flash_loan_receiver;
 pub mod lending_pool;
 /// the trait implemented that supporst getting prices by the AccountId of an asset. The implementation may be a wrapper on the contract that implements `dia_roacle`.
 pub mod price_feed;
+
+pub mod psp22;
