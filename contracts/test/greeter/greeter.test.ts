@@ -13,7 +13,7 @@ const GREET_FUNCTION = 'greet'
 const MAX_CALL_WEIGHT = new BN(5_000_000_000_000).isub(BN_ONE)
 const PROOFSIZE = new BN(1_000_000)
 
-describe('Contract Interaction', () => {
+describe('Greeter contract interactions', () => {
   let api
   let alice
   let contract
