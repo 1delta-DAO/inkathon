@@ -6,31 +6,94 @@ mod abax {
 
 #[ink::contract]
 mod abaxcaller {
-    use crate::abax::traits::lending_pool::LendingPoolView;
-    use crate::abax::traits::lending_pool::RuleId;
+    use crate::abax::traits::lending_pool::LendingPoolBorrow;
+    use crate::abax::traits::lending_pool::LendingPoolDeposit;
+    use crate::abax::traits::lending_pool::LendingPoolError;
+    use crate::abax::traits::psp22::PSP22;
     use ink::{contract_ref, prelude::vec::Vec};
+    use openbrush::contracts::psp22::PSP22Error;
 
     #[ink(storage)]
     pub struct AbaxCaller {
-        lending_pool_view: contract_ref!(LendingPoolView),
+        lending_pool_borrow: contract_ref!(LendingPoolBorrow),
+        lending_pool_deposit: contract_ref!(LendingPoolDeposit),
     }
 
     impl AbaxCaller {
         #[ink(constructor)]
         pub fn new(abax_address: AccountId) -> Self {
             Self {
-                lending_pool_view: abax_address.into(),
+                lending_pool_borrow: abax_address.into(),
+                lending_pool_deposit: abax_address.into(),
             }
         }
 
+        // lending_pool_deposit functions
         #[ink(message)]
-        pub fn view_asset_id(&self, asset: AccountId) -> Option<RuleId> {
-            self.lending_pool_view.view_asset_id(asset)
+        pub fn deposit(
+            &mut self,
+            asset: AccountId,
+            amount: Balance,
+            data: Vec<u8>,
+        ) -> Result<(), LendingPoolError> {
+            let caller: AccountId = Self::env().caller();
+            let mut token: contract_ref!(PSP22) = asset.into();
+            token.transfer_from(caller, self.env().account_id(), amount, Vec::new())?;
+            self.lending_pool_deposit
+                .deposit(asset, caller, amount, data)
         }
 
         #[ink(message)]
-        pub fn view_registered_assets(&self) -> Vec<AccountId> {
-            self.lending_pool_view.view_registered_assets()
+        pub fn redeem(
+            &mut self,
+            asset: AccountId,
+            amount: Balance,
+            data: Vec<u8>,
+        ) -> Result<(), PSP22Error> {
+            let caller: AccountId = Self::env().caller();
+            self.lending_pool_deposit
+                .redeem(asset, caller, amount, data)?;
+            let mut token: contract_ref!(PSP22) = asset.into();
+            token.transfer(caller, amount, Vec::new())
+        }
+
+        // lending_pool_borrow functions
+        #[ink(message)]
+        pub fn borrow(
+            &mut self,
+            asset: AccountId,
+            on_behalf_of: AccountId,
+            amount: Balance,
+            data: Vec<u8>,
+        ) -> Result<(), LendingPoolError> {
+            self.lending_pool_borrow.set_as_collateral(asset, true)?;
+            self.lending_pool_borrow
+                .borrow(asset, on_behalf_of, amount, data)
+        }
+
+        #[ink(message)]
+        pub fn repay(
+            &mut self,
+            asset: AccountId,
+            on_behalf_of: AccountId,
+            amount: Balance,
+            data: Vec<u8>,
+        ) -> Result<Balance, LendingPoolError> {
+            self.lending_pool_borrow.set_as_collateral(asset, false)?;
+            self.lending_pool_borrow
+                .repay(asset, on_behalf_of, amount, data)
+        }
+
+        // PSP22 functions
+        #[ink(message)]
+        pub fn approve(
+            &self,
+            asset: AccountId,
+            spender: AccountId,
+            value: u128,
+        ) -> Result<(), PSP22Error> {
+            let mut token: contract_ref!(PSP22) = asset.into();
+            token.approve(spender, value)
         }
     }
 }
