@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api'
 import { ContractPromise } from '@polkadot/api-contract'
 import { ContractCallOutcome, ContractOptions } from '@polkadot/api-contract/types'
-import { EventRecord } from '@polkadot/types/interfaces'
+import { EventRecord, WeightV2 } from '@polkadot/types/interfaces'
 import { IKeyringPair, ISubmittableResult } from '@polkadot/types/types'
 import { BN, stringCamelCase } from '@polkadot/util'
 import { checkIfBalanceSufficient } from './checkIfBalanceSufficient'
@@ -9,6 +9,8 @@ import { decodeOutput } from './decodeOutput'
 import { getAbiMessage } from './getAbiMessage'
 import { getExtrinsicErrorMessage } from './getExtrinsicErrorMessage'
 import { getMaxGasLimit } from './getGasLimit'
+
+const GAS_LIMIT_MULTIPLIER = 1.01
 
 /**
  * Performs a dry run for the given contract method and arguments.
@@ -98,6 +100,7 @@ export const contractTx = async (
 
   // Call actual query/tx & wrap it in a promise
   const gasLimit = dryResult.gasRequired
+  const newGasLimit = getGasLimit(gasLimit, GAS_LIMIT_MULTIPLIER)
   return new Promise((resolve, reject) => {
     try {
       const isDevelopment =
@@ -105,7 +108,13 @@ export const contractTx = async (
       const finalStatus = isDevelopment ? 'isInBlock' : 'isFinalized'
       const asFinalStatus = isDevelopment ? 'asInBlock' : 'asFinalized'
 
-      const tx = contract.tx[stringCamelCase(method)]({ ...options, gasLimit }, ...args)
+      const tx = contract.tx[stringCamelCase(method)](
+        {
+          ...options,
+          gasLimit: api?.registry.createType('WeightV2', newGasLimit) as WeightV2,
+        },
+        ...args,
+      )
 
       tx.signAndSend(account, async (result) => {
         const isFinalized = result?.status?.[finalStatus]
@@ -150,4 +159,11 @@ export const contractTx = async (
       reject({ errorMessage: getExtrinsicErrorMessage(e), errorEvent: e })
     }
   })
+}
+
+const getGasLimit = (weight: WeightV2, multiplyBy: number) => {
+  return {
+    refTime: weight.refTime.toBn().muln(multiplyBy),
+    proofSize: weight.proofSize.toBn().muln(multiplyBy),
+  }
 }
