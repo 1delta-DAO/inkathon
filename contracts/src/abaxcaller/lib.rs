@@ -37,8 +37,10 @@ mod abaxcaller {
             data: Vec<u8>,
         ) -> Result<(), LendingPoolError> {
             let caller: AccountId = Self::env().caller();
+
             let mut token: contract_ref!(PSP22) = asset.into();
             token.transfer_from(caller, self.env().account_id(), amount, Vec::new())?;
+
             self.lending_pool_deposit
                 .deposit(asset, caller, amount, data)
         }
@@ -51,10 +53,13 @@ mod abaxcaller {
             data: Vec<u8>,
         ) -> Result<(), PSP22Error> {
             let caller: AccountId = Self::env().caller();
-            self.lending_pool_deposit
+
+            let redeem_balance: u128 = self
+                .lending_pool_deposit
                 .redeem(asset, caller, amount, data)?;
+
             let mut token: contract_ref!(PSP22) = asset.into();
-            token.transfer(caller, amount, Vec::new())
+            token.transfer(caller, redeem_balance, Vec::new())
         }
 
         // lending_pool_borrow functions
@@ -62,26 +67,31 @@ mod abaxcaller {
         pub fn borrow(
             &mut self,
             asset: AccountId,
-            on_behalf_of: AccountId,
             amount: Balance,
             data: Vec<u8>,
-        ) -> Result<(), LendingPoolError> {
-            self.lending_pool_borrow.set_as_collateral(asset, true)?;
+        ) -> Result<(), PSP22Error> {
+            let caller: AccountId = Self::env().caller();
+
             self.lending_pool_borrow
-                .borrow(asset, on_behalf_of, amount, data)
+                .borrow(asset, caller, amount, data)?;
+
+            let mut token: contract_ref!(PSP22) = asset.into();
+            token.transfer(caller, amount, Vec::new())
         }
 
         #[ink(message)]
         pub fn repay(
             &mut self,
             asset: AccountId,
-            on_behalf_of: AccountId,
             amount: Balance,
             data: Vec<u8>,
         ) -> Result<Balance, LendingPoolError> {
-            self.lending_pool_borrow.set_as_collateral(asset, false)?;
-            self.lending_pool_borrow
-                .repay(asset, on_behalf_of, amount, data)
+            let caller: AccountId = Self::env().caller();
+
+            let mut token: contract_ref!(PSP22) = asset.into();
+            token.transfer_from(caller, self.env().account_id(), amount, Vec::new())?;
+
+            self.lending_pool_borrow.repay(asset, caller, amount, data)
         }
 
         // PSP22 functions
