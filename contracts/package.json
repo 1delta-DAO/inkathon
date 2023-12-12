@@ -5,7 +5,7 @@
   "version": "0.3.2",
   "scripts": {
     "postinstall": "bash postinstall.sh",
-    "test": "jest",
+    "test": "bash jest-test-all.sh",
     "contract-test": "bash test-all.sh",
     "build": "bash build-all.sh",
     "node": "substrate-contracts-node --dev --base-path ./.node-data",
