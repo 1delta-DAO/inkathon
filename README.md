@@ -79,6 +79,18 @@ Alternatively, you can also deploy contracts manually using [Contracts UI](https
 Open the `frontend/.env.local` file and set the `NEXT_PUBLIC_DEFAULT_CHAIN` variable to `development`. Then restart the frontend and you should be able to interact with the contracts deployed on your local node.
 
 _Read more about environment variables and all available chain constants in the [Environment Variables](#environment-variables) section below._
+## Contract Tests
+### Jest
+Smart contract tests written with Jest are located in `/contracts/test`.
+```bash
+# Run all test suites
+pnpm test
+
+# Run specific test suite abaxcaller
+pnpm test abaxcaller
+```
+> [!WARNING]  
+> After the tests are completed, close the terminal running the fork before restarting the tests.
 
 ## Deployment 🚢
 
