@@ -49,4 +49,4 @@ coverage.json
 .history/
 
 # Deployment data
-contracts/deployments/**
+contracts/deployments/
