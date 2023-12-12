@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":["OracleGetters","OracleSetters"],"type":["OracleGettersRef","OracleSettersRef"]};
