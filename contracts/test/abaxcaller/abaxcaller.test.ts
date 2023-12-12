@@ -111,7 +111,7 @@ describe('Abaxcaller contract interactions', () => {
         maxApproveArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -129,7 +129,7 @@ describe('Abaxcaller contract interactions', () => {
         approveDepositArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -146,7 +146,7 @@ describe('Abaxcaller contract interactions', () => {
         depositArgs,
       )
         .then((result) => {
-          console.log('Deposit transaction finalized:', result)
+          console.log('Deposit transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Deposit transaction error:', error)
@@ -197,7 +197,7 @@ describe('Abaxcaller contract interactions', () => {
         maxApproveArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -215,7 +215,7 @@ describe('Abaxcaller contract interactions', () => {
         approveDepositArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -232,7 +232,7 @@ describe('Abaxcaller contract interactions', () => {
         depositArgs,
       )
         .then((result) => {
-          console.log('Deposit transaction finalized:', result)
+          console.log('Deposit transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Deposit transaction error:', error)
@@ -254,7 +254,7 @@ describe('Abaxcaller contract interactions', () => {
         approveCollateralTokenArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -271,7 +271,7 @@ describe('Abaxcaller contract interactions', () => {
         withdrawArgs,
       )
         .then((result) => {
-          console.log('Withdraw transaction finalized:', result)
+          console.log('Withdraw transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Withdraw transaction error:', error)
@@ -323,7 +323,7 @@ describe('Abaxcaller contract interactions', () => {
         maxApproveArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -341,7 +341,7 @@ describe('Abaxcaller contract interactions', () => {
         approveDepositArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -358,7 +358,7 @@ describe('Abaxcaller contract interactions', () => {
         depositArgs,
       )
         .then((result) => {
-          console.log('Deposit transaction finalized:', result)
+          console.log('Deposit transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Deposit transaction error:', error)
@@ -376,7 +376,7 @@ describe('Abaxcaller contract interactions', () => {
         approveBorrowArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -393,7 +393,7 @@ describe('Abaxcaller contract interactions', () => {
         setCollateralArgs,
       )
         .then((result) => {
-          console.log('Set collateral transaction finalized:', result)
+          console.log('Set collateral transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Set collateral  transaction error:', error)
@@ -403,7 +403,7 @@ describe('Abaxcaller contract interactions', () => {
       const borrowArgs = [ASSETS[asset].address, borrowAmount, []]
       await contractTx(api, account, callerContract, CALLER_FUNCTION_BORROW, undefined, borrowArgs)
         .then((result) => {
-          console.log('Borrow transaction finalized:', result)
+          console.log('Borrow transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Borrow transaction error:', error)
@@ -456,7 +456,7 @@ describe('Abaxcaller contract interactions', () => {
         maxApproveArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -474,7 +474,7 @@ describe('Abaxcaller contract interactions', () => {
         approveDepositArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -491,7 +491,7 @@ describe('Abaxcaller contract interactions', () => {
         depositArgs,
       )
         .then((result) => {
-          console.log('Deposit transaction finalized:', result)
+          console.log('Deposit transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Deposit transaction error:', error)
@@ -509,7 +509,7 @@ describe('Abaxcaller contract interactions', () => {
         approveBorrowArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -526,7 +526,7 @@ describe('Abaxcaller contract interactions', () => {
         setCollateralArgs,
       )
         .then((result) => {
-          console.log('Set collateral transaction finalized:', result)
+          console.log('Set collateral transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Set collateral transaction error:', error)
@@ -536,7 +536,7 @@ describe('Abaxcaller contract interactions', () => {
       const borrowArgs = [ASSETS[asset].address, borrowAmount, []]
       await contractTx(api, account, callerContract, CALLER_FUNCTION_BORROW, undefined, borrowArgs)
         .then((result) => {
-          console.log('Borrow transaction finalized:', result)
+          console.log('Borrow transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Borrow transaction error:', error)
@@ -553,7 +553,7 @@ describe('Abaxcaller contract interactions', () => {
         approveRepayArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -563,7 +563,7 @@ describe('Abaxcaller contract interactions', () => {
       const repayArgs = [ASSETS[asset].address, repayAmount, []]
       await contractTx(api, account, callerContract, CALLER_FUNCTION_REPAY, undefined, repayArgs)
         .then((result) => {
-          console.log('Repay transaction finalized:', result)
+          console.log('Repay transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Repay transaction error:', error)
@@ -615,7 +615,7 @@ describe('Abaxcaller contract interactions', () => {
         maxApproveArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -633,7 +633,7 @@ describe('Abaxcaller contract interactions', () => {
         approveDepositArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -650,7 +650,7 @@ describe('Abaxcaller contract interactions', () => {
         depositArgs,
       )
         .then((result) => {
-          console.log('Deposit transaction finalized:', result)
+          console.log('Deposit transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Deposit transaction error:', error)
@@ -668,7 +668,7 @@ describe('Abaxcaller contract interactions', () => {
         approveBorrowArgs,
       )
         .then((result) => {
-          console.log('Approve transaction finalized:', result)
+          console.log('Approve transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Approve transaction error:', error)
@@ -685,7 +685,7 @@ describe('Abaxcaller contract interactions', () => {
         setCollateralArgs,
       )
         .then((result) => {
-          console.log('Set collateral transaction finalized:', result)
+          console.log('Set collateral transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Set collateral transaction error:', error)
@@ -703,7 +703,7 @@ describe('Abaxcaller contract interactions', () => {
         flashLoanArgs,
       )
         .then((result) => {
-          console.log('Flash loan transaction finalized:', result)
+          console.log('Flash loan transaction finalized:', result.extrinsicHash)
         })
         .catch((error) => {
           console.error('Flash loan transaction error:', error)
