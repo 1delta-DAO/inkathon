@@ -83,6 +83,9 @@ _Read more about environment variables and all available chain constants in the 
 ### Jest
 Smart contract tests written with Jest are located in `/contracts/test`.
 ```bash
+# To run the tests, set contracts as the active working directory
+cd contracts
+
 # Run all test suites
 pnpm test
 
