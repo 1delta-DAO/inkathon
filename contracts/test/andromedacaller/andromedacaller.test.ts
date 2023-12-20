@@ -6,7 +6,7 @@ import { ASSETS } from '../../data/assets'
 import callerAbiPath from '../../deployments/andromedacaller/andromedacaller.json'
 import { address } from '../../deployments/andromedacaller/development'
 import psp22AbiPath from '../../deployments/psp22/psp22.json'
-import { contractQuery, contractTx, decodeOutput } from '../helpers'
+import { contractQuery, contractTx, decodeOutput, getPsp22Balance } from '../helpers'
 import psp22TradingPairAbiPath from '../metadata/andromeda/psp22_trading_pair.json'
 import routerAbiPath from '../metadata/andromeda/router.json'
 
@@ -25,15 +25,6 @@ const POOL_FUNCTION_GET_A_AMOUNT_OUT = 'get_psp22_a_amount_out'
 
 const TOKEN_FUNCTION_APPROVE = 'PSP22::approve'
 const TOKEN_FUNCTION_BALANCEOF = 'PSP22::balanceOf'
-
-const BALANCES = {
-  DAI: 100000000000n,
-  USDC: 100000000000n,
-  WETH: 50000000000000000000n,
-  BTC: 500000000n,
-  AZERO: 100000000000000000n,
-  DOT: 20000000000000000n,
-}
 
 describe('Andromedacaller contract interactions', () => {
   let api: ApiPromise
@@ -212,6 +203,10 @@ describe('Andromedacaller contract interactions', () => {
     async () => {
       const assetA = 'WETH'
       const assetB = 'DAI'
+      const balances = {
+        [assetA]: await getPsp22Balance(api, account, ASSETS[assetA].address),
+        [assetB]: await getPsp22Balance(api, account, ASSETS[assetB].address),
+      }
       const depositAmount = {
         [assetA]: 10n * 10n ** BigInt(ASSETS[assetA].decimals),
         [assetB]: 20000n * 10n ** BigInt(ASSETS[assetB].decimals),
@@ -412,9 +407,9 @@ describe('Andromedacaller contract interactions', () => {
 
       const minTokenAOutAmount = (expectedTokenAOutAmount * (100n - slippage)) / 100n
 
-      expect(newTokenBBalance).toBe(BALANCES[assetB] - depositAmount[assetB] - swapAmountTokenB)
+      expect(newTokenBBalance).toBe(balances[assetB] - depositAmount[assetB] - swapAmountTokenB)
       expect(newTokenABalance).toBeGreaterThanOrEqual(
-        BALANCES[assetA] - depositAmount[assetA] + minTokenAOutAmount,
+        balances[assetA] - depositAmount[assetA] + minTokenAOutAmount,
       )
     },
     TIMEOUT,
