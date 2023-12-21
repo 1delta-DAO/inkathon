@@ -24,6 +24,7 @@
     "./deployments/addresses/**/*.ts",
     "./scripts/**/*.ts",
     "./test/**/*.ts",
+    "./data/**/*.ts",
     "./test/**/*.json"
   ]
 }

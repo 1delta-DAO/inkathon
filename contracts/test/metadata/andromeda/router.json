@@ -1,0 +1,603 @@
+{
+    "source": {
+        "hash": "0x552c3c3e0aad31363a37d11aaba86af4682a4555c639c40ad69f4d662e2a80f3",
+        "language": "ink! 4.0.1",
+        "compiler": "rustc 1.70.0-nightly",
+        "build_info": {
+            "build_mode": "Release",
+            "cargo_contract_version": "2.1.0",
+            "rust_toolchain": "nightly-x86_64-unknown-linux-gnu",
+            "wasm_opt_settings": {
+                "keep_debug_symbols": false,
+                "optimization_passes": "Z"
+            }
+        }
+    },
+    "contract": {
+        "name": "router",
+        "version": "0.9.6",
+        "authors": [
+            "Edinyanga Ottoho <elzucky@gmail.com>"
+        ]
+    },
+    "spec": {
+        "constructors": [
+            {
+                "args": [
+                    {
+                        "label": "azero_trading_pair_hash",
+                        "type": {
+                            "displayName": [
+                                "Hash"
+                            ],
+                            "type": 0
+                        }
+                    },
+                    {
+                        "label": "psp22_trading_pair_hash",
+                        "type": {
+                            "displayName": [
+                                "Hash"
+                            ],
+                            "type": 0
+                        }
+                    },
+                    {
+                        "label": "andromeda_token",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    },
+                    {
+                        "label": "protocol_fees",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    }
+                ],
+                "docs": [
+                    "Creates a new instance of this contract."
+                ],
+                "label": "new",
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink_primitives",
+                        "ConstructorResult"
+                    ],
+                    "type": 5
+                },
+                "selector": "0x9bae9d5e"
+            }
+        ],
+        "docs": [],
+        "events": [],
+        "lang_error": {
+            "displayName": [
+                "ink",
+                "LangError"
+            ],
+            "type": 7
+        },
+        "messages": [
+            {
+                "args": [
+                    {
+                        "label": "psp22_token",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    }
+                ],
+                "docs": [],
+                "label": "get_associated_azero_pool",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 8
+                },
+                "selector": "0x611a3052"
+            },
+            {
+                "args": [
+                    {
+                        "label": "psp22_token_a",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    },
+                    {
+                        "label": "psp22_token_b",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    }
+                ],
+                "docs": [],
+                "label": "get_associated_psp22_pool",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 8
+                },
+                "selector": "0xa3c62862"
+            },
+            {
+                "args": [
+                    {
+                        "label": "psp22_token",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    }
+                ],
+                "docs": [],
+                "label": "azero_pool_found",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 9
+                },
+                "selector": "0x95c5d2c8"
+            },
+            {
+                "args": [
+                    {
+                        "label": "psp22_token_a",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    },
+                    {
+                        "label": "psp22_token_b",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    }
+                ],
+                "docs": [],
+                "label": "psp22_pool_found",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 9
+                },
+                "selector": "0x026e8c83"
+            },
+            {
+                "args": [
+                    {
+                        "label": "psp22_token",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    },
+                    {
+                        "label": "version",
+                        "type": {
+                            "displayName": [
+                                "u64"
+                            ],
+                            "type": 11
+                        }
+                    }
+                ],
+                "docs": [],
+                "label": "create_azero_liquidity",
+                "mutates": true,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 8
+                },
+                "selector": "0x23c6ffad"
+            },
+            {
+                "args": [
+                    {
+                        "label": "psp22_token_a",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    },
+                    {
+                        "label": "psp22_token_b",
+                        "type": {
+                            "displayName": [
+                                "AccountId"
+                            ],
+                            "type": 4
+                        }
+                    },
+                    {
+                        "label": "version",
+                        "type": {
+                            "displayName": [
+                                "u64"
+                            ],
+                            "type": 11
+                        }
+                    }
+                ],
+                "docs": [],
+                "label": "create_psp22_liquidity",
+                "mutates": true,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 8
+                },
+                "selector": "0x50495b96"
+            }
+        ]
+    },
+    "storage": {
+        "root": {
+            "layout": {
+                "struct": {
+                    "fields": [
+                        {
+                            "layout": {
+                                "leaf": {
+                                    "key": "0x00000000",
+                                    "ty": 0
+                                }
+                            },
+                            "name": "azero_trading_pair_hash"
+                        },
+                        {
+                            "layout": {
+                                "leaf": {
+                                    "key": "0x00000000",
+                                    "ty": 0
+                                }
+                            },
+                            "name": "psp22_trading_pair_hash"
+                        },
+                        {
+                            "layout": {
+                                "leaf": {
+                                    "key": "0x00000000",
+                                    "ty": 3
+                                }
+                            },
+                            "name": "andromeda_token"
+                        },
+                        {
+                            "layout": {
+                                "leaf": {
+                                    "key": "0x00000000",
+                                    "ty": 3
+                                }
+                            },
+                            "name": "protocol_fees"
+                        },
+                        {
+                            "layout": {
+                                "root": {
+                                    "layout": {
+                                        "leaf": {
+                                            "key": "0xa56b05c4",
+                                            "ty": 4
+                                        }
+                                    },
+                                    "root_key": "0xa56b05c4"
+                                }
+                            },
+                            "name": "azero_trading_pairs"
+                        },
+                        {
+                            "layout": {
+                                "root": {
+                                    "layout": {
+                                        "leaf": {
+                                            "key": "0x73c0e38b",
+                                            "ty": 4
+                                        }
+                                    },
+                                    "root_key": "0x73c0e38b"
+                                }
+                            },
+                            "name": "psp22_trading_pairs"
+                        }
+                    ],
+                    "name": "Router"
+                }
+            },
+            "root_key": "0x00000000"
+        }
+    },
+    "types": [
+        {
+            "id": 0,
+            "type": {
+                "def": {
+                    "composite": {
+                        "fields": [
+                            {
+                                "type": 1,
+                                "typeName": "[u8; 32]"
+                            }
+                        ]
+                    }
+                },
+                "path": [
+                    "ink_primitives",
+                    "types",
+                    "Hash"
+                ]
+            }
+        },
+        {
+            "id": 1,
+            "type": {
+                "def": {
+                    "array": {
+                        "len": 32,
+                        "type": 2
+                    }
+                }
+            }
+        },
+        {
+            "id": 2,
+            "type": {
+                "def": {
+                    "primitive": "u8"
+                }
+            }
+        },
+        {
+            "id": 3,
+            "type": {
+                "def": {
+                    "sequence": {
+                        "type": 4
+                    }
+                }
+            }
+        },
+        {
+            "id": 4,
+            "type": {
+                "def": {
+                    "composite": {
+                        "fields": [
+                            {
+                                "type": 1,
+                                "typeName": "[u8; 32]"
+                            }
+                        ]
+                    }
+                },
+                "path": [
+                    "ink_primitives",
+                    "types",
+                    "AccountId"
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "type": {
+                "def": {
+                    "variant": {
+                        "variants": [
+                            {
+                                "fields": [
+                                    {
+                                        "type": 6
+                                    }
+                                ],
+                                "index": 0,
+                                "name": "Ok"
+                            },
+                            {
+                                "fields": [
+                                    {
+                                        "type": 7
+                                    }
+                                ],
+                                "index": 1,
+                                "name": "Err"
+                            }
+                        ]
+                    }
+                },
+                "params": [
+                    {
+                        "name": "T",
+                        "type": 6
+                    },
+                    {
+                        "name": "E",
+                        "type": 7
+                    }
+                ],
+                "path": [
+                    "Result"
+                ]
+            }
+        },
+        {
+            "id": 6,
+            "type": {
+                "def": {
+                    "tuple": []
+                }
+            }
+        },
+        {
+            "id": 7,
+            "type": {
+                "def": {
+                    "variant": {
+                        "variants": [
+                            {
+                                "index": 1,
+                                "name": "CouldNotReadInput"
+                            }
+                        ]
+                    }
+                },
+                "path": [
+                    "ink_primitives",
+                    "LangError"
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "type": {
+                "def": {
+                    "variant": {
+                        "variants": [
+                            {
+                                "fields": [
+                                    {
+                                        "type": 4
+                                    }
+                                ],
+                                "index": 0,
+                                "name": "Ok"
+                            },
+                            {
+                                "fields": [
+                                    {
+                                        "type": 7
+                                    }
+                                ],
+                                "index": 1,
+                                "name": "Err"
+                            }
+                        ]
+                    }
+                },
+                "params": [
+                    {
+                        "name": "T",
+                        "type": 4
+                    },
+                    {
+                        "name": "E",
+                        "type": 7
+                    }
+                ],
+                "path": [
+                    "Result"
+                ]
+            }
+        },
+        {
+            "id": 9,
+            "type": {
+                "def": {
+                    "variant": {
+                        "variants": [
+                            {
+                                "fields": [
+                                    {
+                                        "type": 10
+                                    }
+                                ],
+                                "index": 0,
+                                "name": "Ok"
+                            },
+                            {
+                                "fields": [
+                                    {
+                                        "type": 7
+                                    }
+                                ],
+                                "index": 1,
+                                "name": "Err"
+                            }
+                        ]
+                    }
+                },
+                "params": [
+                    {
+                        "name": "T",
+                        "type": 10
+                    },
+                    {
+                        "name": "E",
+                        "type": 7
+                    }
+                ],
+                "path": [
+                    "Result"
+                ]
+            }
+        },
+        {
+            "id": 10,
+            "type": {
+                "def": {
+                    "primitive": "bool"
+                }
+            }
+        },
+        {
+            "id": 11,
+            "type": {
+                "def": {
+                    "primitive": "u64"
+                }
+            }
+        }
+    ],
+    "version": "4"
+}

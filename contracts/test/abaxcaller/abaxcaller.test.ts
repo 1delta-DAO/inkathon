@@ -2,15 +2,15 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ContractPromise } from '@polkadot/api-contract'
 import { Keyring } from '@polkadot/keyring'
 import { IKeyringPair } from '@polkadot/types/types'
-import { address } from '../../deployments/addresses/abaxcaller/development'
+import { ASSETS } from '../../data/assets'
 import callerAbiPath from '../../deployments/files/abaxcaller/abaxcaller.json'
+import { address } from '../../deployments/addresses/abaxcaller/development'
 import psp22AbiPath from '../../deployments/files/psp22/psp22.json'
-import { contractQuery, contractTx, decodeOutput } from '../helpers'
+import { contractQuery, contractTx, decodeOutput, getPsp22Balance } from '../helpers'
 import abaxAbiPath from '../metadata/abax.json'
 
 const TIMEOUT = 60000
 const ENDPOINT = 'ws://localhost:9944'
-const ALICE_ADDRESS_ENCODED = '0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d'
 
 const ABAX_ADDRESS = '5GBai32Vbzizw3xidVUwkjzFydaas7s2B8uudgtiguzmW8yn'
 const ABAX_FUNCTION_VIEW_USER_RESERVE_DATA = 'LendingPoolView::view_user_reserve_data'
@@ -27,54 +27,6 @@ const TOKEN_FUNCTION_APPROVE = 'PSP22::approve'
 const TOKEN_FUNCTION_BALANCEOF = 'PSP22::balanceOf'
 
 const MAXUINT128 = 2n ** 128n - 1n
-
-const BALANCES = {
-  DAI: 100000000000n,
-  USDC: 100000000000n,
-  WETH: 50000000000000000000n,
-  BTC: 500000000n,
-  AZERO: 100000000000000000n,
-  DOT: 20000000000000000n,
-}
-
-const ASSETS = {
-  DAI: {
-    address: '5ELYqHS8YZ2hAEnCiqGJg8Ztc6JoFFKHpvgUbuz9oW9vc5at',
-    aTokenAddress: '5GusvrnNEfYThkDxdSUZRca9ScTiVyrF3S76UJEQTUXBDdmT',
-    vTokenAddress: '5EkScoCUiXCraQw5kSbknbugVEhWod9xMv4PRkyo9MHTREXw',
-    decimals: 6,
-  },
-  USDC: {
-    address: '5GXDPgrjJC7cyr9B1jCm5UqLGuephaEKGoAeHKfodB3TVghP',
-    aTokenAddress: '5EVfH2BRm2ggimfRcuEH8zRYkviyEN69et4fDjHWHzWjirBK',
-    vTokenAddress: '5CdF6Vdf9mAG5fjhFuNaLfFLj9i31SjxBsVj5JHBARmL5Xmd',
-    decimals: 6,
-  },
-  WETH: {
-    address: '5DgMoQHDKSJryNGR4DXo5H267Hmnf9ph5ZMLPXBtPxcZfN3P',
-    aTokenAddress: '5DvMrRU79zS29FSSP5k8CyuCK2de59Xvvqwzbm1UzqNWwxFY',
-    vTokenAddress: '5HY4mmPQuMDakTDeaf6Cj5TJaSbmb7G3fHczcyuyhmU6UeVR',
-    decimals: 18,
-  },
-  BTC: {
-    address: '5CJCSzTY2wZQaDp9PrzC1LsVfTEp9sGBHcAY3vjv9JLakfX9',
-    aTokenAddress: '5GZm7bsGE53Gyf9Cg2GwsTjDrP9skY6A6uSZiCFWDoEZyMtj',
-    vTokenAddress: '5EEurzNsm5SMDSJBHbtu4GHbkdSsHdjPbWNb28vxpEWkZJWX',
-    decimals: 8,
-  },
-  AZERO: {
-    address: '5CLLmNswXre58cuz6hBnyscpieFYUyqq5vwvopiW3q41SSYF',
-    aTokenAddress: '5Da8px1HEoAvs3m9i55ftfSswDbskqCY4rHr1KAFsTqfiTia',
-    vTokenAddress: '5ChJnTSpsQ26zJGyGt7uHHLRjbquAy1JSmaijMujUi9VKfJL',
-    decimals: 12,
-  },
-  DOT: {
-    address: '5EwcHvcGBC9jnVzmPJUzwgZJLxUkrWCzzZfoqpjZ45o9C9Gh',
-    aTokenAddress: '5D1dwQEhyXzVDuB8RX85xm9iNa4pTtUr2jVpYHNFte7FxRTw',
-    vTokenAddress: '5HDidr2RT4VGkxyGuJieGAfqYpqphwviB4WULaNp6VNsf2B2',
-    decimals: 12,
-  },
-}
 
 describe('Abaxcaller contract interactions', () => {
   let api: ApiPromise
@@ -183,6 +135,9 @@ describe('Abaxcaller contract interactions', () => {
     'Contract function calls deposit, withdraw',
     async () => {
       const asset = 'WETH'
+      const balances = {
+        [asset]: await getPsp22Balance(api, account, ASSETS[asset].address),
+      }
       const depositAmount = 5n * 10n ** BigInt(ASSETS[asset].decimals)
       const withdrawAmount = 3n * 10n ** BigInt(ASSETS[asset].decimals)
 
@@ -299,7 +254,7 @@ describe('Abaxcaller contract interactions', () => {
       }
 
       const realizedAmount = BigInt(parseInt(decodedOutput.replace(/,/g, ''), 10))
-      const expectedAmount = BALANCES[asset] - depositAmount + withdrawAmount
+      const expectedAmount = balances[asset] - depositAmount + withdrawAmount
       expect(realizedAmount).toBe(expectedAmount)
     },
     TIMEOUT,
@@ -309,6 +264,9 @@ describe('Abaxcaller contract interactions', () => {
     'Contract function calls deposit, borrow',
     async () => {
       const asset = 'USDC'
+      const balances = {
+        [asset]: await getPsp22Balance(api, account, ASSETS[asset].address),
+      }
       const depositAmount = 5000n * 10n ** BigInt(ASSETS[asset].decimals)
       const borrowAmount = 100n * 10n ** BigInt(ASSETS[asset].decimals)
 
@@ -431,7 +389,7 @@ describe('Abaxcaller contract interactions', () => {
       }
 
       const realizedAmount = BigInt(parseInt(decodedOutput.replace(/,/g, ''), 10))
-      const expectedAmount = BALANCES[asset] - depositAmount + borrowAmount
+      const expectedAmount = balances[asset] - depositAmount + borrowAmount
       expect(realizedAmount).toBe(expectedAmount)
     },
     TIMEOUT,
@@ -441,6 +399,9 @@ describe('Abaxcaller contract interactions', () => {
     'Contract function calls deposit, borrow, repay',
     async () => {
       const asset = 'BTC'
+      const balances = {
+        [asset]: await getPsp22Balance(api, account, ASSETS[asset].address),
+      }
       const depositAmount = 5n * 10n ** BigInt(ASSETS[asset].decimals)
       const borrowAmount = 2n * 10n ** BigInt(ASSETS[asset].decimals)
       const repayAmount = 1n * 10n ** BigInt(ASSETS[asset].decimals)
@@ -591,7 +552,7 @@ describe('Abaxcaller contract interactions', () => {
       }
 
       const realizedAmount = BigInt(parseInt(decodedOutput.replace(/,/g, ''), 10))
-      const expectedAmount = BALANCES[asset] - depositAmount + borrowAmount - repayAmount
+      const expectedAmount = balances[asset] - depositAmount + borrowAmount - repayAmount
       expect(realizedAmount).toBe(expectedAmount)
     },
     TIMEOUT,

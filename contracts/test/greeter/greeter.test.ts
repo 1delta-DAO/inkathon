@@ -48,13 +48,9 @@ describe('Greeter contract interactions', () => {
   test('Contract function call set_message', async () => {
     const newValue = 'newValue'
 
-    await callContract(api, contract, SET_MESSAGE_FUNCTION, alice, [newValue])
-      .then((result) => {
-        console.log('Transaction finalized:', result)
-      })
-      .catch((error) => {
-        console.error('Error:', error)
-      })
+    await callContract(api, contract, SET_MESSAGE_FUNCTION, alice, [newValue]).catch((error) => {
+      console.error('Error:', error)
+    })
 
     const { gasRequired, storageDeposit, result, output } = await queryContract(
       api,
@@ -92,11 +88,7 @@ const queryContract = async (
     ...args,
   )
 
-  console.log(result.toHuman())
-
-  if (result.isOk) {
-    console.log('Success', output.toHuman())
-  } else {
+  if (!result.isOk) {
     console.error('Error', result.asErr)
   }
 
@@ -125,10 +117,7 @@ export const callContract = (
         const tx = contract.tx[stringCamelCase(functionName)]({ gasLimit }, ...args)
 
         tx.signAndSend(account, (result) => {
-          if (result.status.isInBlock) {
-            console.log('Transaction in block')
-          } else if (result.status.isFinalized) {
-            console.log('Transaction finalized')
+          if (result.status.isFinalized) {
             resolve(result)
           }
         })
