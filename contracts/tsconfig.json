@@ -20,8 +20,8 @@
   },
   "exclude": ["./*/target"],
   "include": [
-    "./deployments/**/*.json",
-    "./deployments/**/*.ts",
+    "./deployments/files/**/*.json",
+    "./deployments/addresses/**/*.ts",
     "./scripts/**/*.ts",
     "./test/**/*.ts",
     "./test/**/*.json"
