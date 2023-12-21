@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api'
 import { ContractPromise } from '@polkadot/api-contract'
 import { IKeyringPair } from '@polkadot/types/types'
-import psp22AbiPath from '../../deployments/psp22/psp22.json'
+import psp22AbiPath from '../../deployments/files/psp22/psp22.json'
 import { contractQuery, decodeOutput } from '../helpers'
 
 const TOKEN_FUNCTION_BALANCEOF = 'PSP22::balanceOf'
