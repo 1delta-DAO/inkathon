@@ -6,7 +6,7 @@ import path from 'path'
  * NOTE: Base directory can be configured via the `DIR` environment variable
  */
 export const getDeploymentData = async (contractName: string) => {
-  const baseDir = process.env.DIR || './deployments'
+  const baseDir = process.env.FILES || './deployments/files'
   const contractPath = path.join(path.resolve(), baseDir, contractName)
 
   let abi, wasm
