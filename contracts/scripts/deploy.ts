@@ -7,6 +7,7 @@ import { writeContractAddresses } from './utils/writeContractAddresses'
 const PRICE_ORACLE_ADDRESS_MAINNET = '5F7wPCMXX65RmL8oiuAFNKu2ydhvgcissDZ3NWZ5X85n2WPG'
 const PRICE_ORACLE_ADDRESS_TESTNET = '5F5z8pZoLgkGapEksFWc2h7ZxH2vdh1A9agnhXvfdCeAfS9b'
 const ABAX_ADDRESS_TESTNET = '5GBai32Vbzizw3xidVUwkjzFydaas7s2B8uudgtiguzmW8yn'
+const ANDROMEDA_ROUTER_ADDRESS_TESTNET = '5ErbVfJHQSnFL9cERSP73v2EaaBJCxW16VuZiX4qv63KWS1T'
 
 // [KEEP THIS] Dynamically load environment from `.env.{chainId}`
 const chainId = process.env.CHAIN || 'development'
@@ -99,6 +100,22 @@ const deploy_abaxcaller = async () => {
   })
 }
 
+const deploy_andromedacaller = async () => {
+  const initParams = await initPolkadotJs()
+  const { api, chain, account } = initParams
+
+  // Deploy greeter contract
+  const { abi, wasm } = await getDeploymentData('andromedacaller')
+  const andromedacaller = await deployContract(api, account, abi, wasm, 'new', [
+    ANDROMEDA_ROUTER_ADDRESS_TESTNET,
+  ])
+
+  // Write contract addresses to `{contract}/{network}.ts` file(s)
+  await writeContractAddresses(chain.network, {
+    andromedacaller,
+  })
+}
+
 const deployContracts = async () => {
   try {
     await deploy_greeter()
@@ -108,6 +125,8 @@ const deployContracts = async () => {
     await deploy_psp22()
 
     await deploy_abaxcaller()
+
+    await deploy_andromedacaller()
 
     console.log('\nDeployments completed successfully')
   } catch (error) {
