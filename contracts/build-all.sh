@@ -5,6 +5,8 @@ set -eu
 CONTRACTS_DIR="${CONTRACTS_DIR:=./src}" # Base contract directory 
 FILES="${FILES:=./deployments/files}" # Output directory for build files
 ADDRESSES="${ADDRESSES:=./deployments/addresses}" # Output directory for contract addresses
+METADATA="${METADATA:=./test/metadata}"
+GENERATED_TYPES="${GENERATED_TYPES:=./typed_contracts}"
 
 # Copy command helper (cross-platform)
 CP_CMD=$(command -v cp &> /dev/null && echo "cp" || echo "copy")
@@ -26,4 +28,10 @@ do
   $CP_CMD ./target/ink/$i/$i.contract $FILES/$i/
   $CP_CMD ./target/ink/$i/$i.wasm $FILES/$i/
   $CP_CMD ./target/ink/$i/$i.json $FILES/$i/
+
+  echo "Generating contract types from '$FILES/$i/' to '$GENERATED_TYPES'"
+  npx tsx node_modules/@727-ventures/typechain-polkadot --in $FILES/$i/ --out $GENERATED_TYPES
 done
+
+echo -e "\nGenerating contract types from '$METADATA' to '$GENERATED_TYPES'"
+npx tsx node_modules/@727-ventures/typechain-polkadot --in $METADATA --out $GENERATED_TYPES
