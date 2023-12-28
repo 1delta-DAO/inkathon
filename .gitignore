@@ -47,6 +47,3 @@ coverage.json
 !.vscode/extensions.json
 !.vscode/*.code-workspace
 .history/
-
-# contract files
-contracts/deployments/files
