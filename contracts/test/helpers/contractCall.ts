@@ -1,16 +1,14 @@
 import { ApiPromise } from '@polkadot/api'
 import { ContractPromise } from '@polkadot/api-contract'
 import { ContractCallOutcome, ContractOptions } from '@polkadot/api-contract/types'
-import { EventRecord, WeightV2 } from '@polkadot/types/interfaces'
+import { EventRecord } from '@polkadot/types/interfaces'
 import { IKeyringPair, ISubmittableResult } from '@polkadot/types/types'
 import { BN, stringCamelCase } from '@polkadot/util'
 import { checkIfBalanceSufficient } from './checkIfBalanceSufficient'
 import { decodeOutput } from './decodeOutput'
 import { getAbiMessage } from './getAbiMessage'
 import { getExtrinsicErrorMessage } from './getExtrinsicErrorMessage'
-import { getMaxGasLimit } from './getGasLimit'
-
-const GAS_LIMIT_MULTIPLIER = 1.01
+import { getMaxGasLimit, getSafeGasLimit } from './getGasLimit'
 
 /**
  * Performs a dry run for the given contract method and arguments.
@@ -21,8 +19,8 @@ export const contractCallDryRun = async (
   account: IKeyringPair | string,
   contract: ContractPromise,
   method: string,
-  options = {} as ContractOptions,
   args = [] as unknown[],
+  options = {} as ContractOptions,
 ): Promise<ContractCallOutcome> => {
   const abiMessage = getAbiMessage(contract, method)
   const address = (account as IKeyringPair)?.address || account
@@ -47,8 +45,8 @@ export const contractQuery = async (
   address: string,
   contract: ContractPromise,
   method: string,
-  options = {} as ContractOptions,
   args = [] as unknown[],
+  options = {} as ContractOptions,
 ): Promise<ContractCallOutcome> => {
   // HACK: This should be possible by setting the `gasLimit` to null or -1 in the future.
   const gasLimit = getMaxGasLimit(api)
@@ -77,8 +75,8 @@ export const contractTx = async (
   account: IKeyringPair | string,
   contract: ContractPromise,
   method: string,
-  options = {} as ContractOptions,
   args = [] as unknown[],
+  options = {} as ContractOptions,
 ): Promise<ContractTxResult> => {
   // Check if account has sufficient balance
   const hasSufficientBalance = await checkIfBalanceSufficient(api, account, options?.value)
@@ -90,7 +88,7 @@ export const contractTx = async (
 
   // Dry run to determine required gas and potential errors
   delete options.gasLimit
-  const dryResult = await contractCallDryRun(api, account, contract, method, options, args)
+  const dryResult = await contractCallDryRun(api, account, contract, method, args, options)
   const { isError, decodedOutput } = decodeOutput(dryResult, contract, method)
   if (isError)
     return Promise.reject({
@@ -100,7 +98,6 @@ export const contractTx = async (
 
   // Call actual query/tx & wrap it in a promise
   const gasLimit = dryResult.gasRequired
-  const newGasLimit = getGasLimit(gasLimit, GAS_LIMIT_MULTIPLIER)
   return new Promise((resolve, reject) => {
     try {
       const isDevelopment =
@@ -111,7 +108,7 @@ export const contractTx = async (
       const tx = contract.tx[stringCamelCase(method)](
         {
           ...options,
-          gasLimit: api?.registry.createType('WeightV2', newGasLimit) as WeightV2,
+          gasLimit: getSafeGasLimit(api, gasLimit),
         },
         ...args,
       )
@@ -159,11 +156,4 @@ export const contractTx = async (
       reject({ errorMessage: getExtrinsicErrorMessage(e), errorEvent: e })
     }
   })
-}
-
-const getGasLimit = (weight: WeightV2, multiplyBy: number) => {
-  return {
-    refTime: weight.refTime.toBn().muln(multiplyBy),
-    proofSize: weight.proofSize.toBn().muln(multiplyBy),
-  }
 }
