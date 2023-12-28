@@ -23,8 +23,10 @@
     "./deployments/files/**/*.json",
     "./deployments/addresses/**/*.ts",
     "./scripts/**/*.ts",
-    "./test/**/*.ts",
     "./data/**/*.ts",
-    "./test/**/*.json"
+    "./test/**/*.ts",
+    "./test/**/*.json",
+    "./typed_contracts/**/*.ts",
+    "./typed_contracts/**/*.json"
   ]
 }
