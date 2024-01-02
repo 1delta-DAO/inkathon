@@ -86,20 +86,6 @@ const deploy_psp22 = async () => {
   })
 }
 
-const deploy_abaxcaller = async () => {
-  const initParams = await initPolkadotJs()
-  const { api, chain, account } = initParams
-
-  // Deploy greeter contract
-  const { abi, wasm } = await getDeploymentData('abaxcaller')
-  const abaxcaller = await deployContract(api, account, abi, wasm, 'new', [ABAX_ADDRESS_TESTNET])
-
-  // Write contract addresses to `{contract}/{network}.ts` file(s)
-  await writeContractAddresses(chain.network, {
-    abaxcaller,
-  })
-}
-
 const deploy_andromedacaller = async () => {
   const initParams = await initPolkadotJs()
   const { api, chain, account } = initParams
@@ -114,6 +100,25 @@ const deploy_andromedacaller = async () => {
   await writeContractAddresses(chain.network, {
     andromedacaller,
   })
+
+  return andromedacaller.address
+}
+
+const deploy_abaxcaller = async (address) => {
+  const initParams = await initPolkadotJs()
+  const { api, chain, account } = initParams
+
+  // Deploy greeter contract
+  const { abi, wasm } = await getDeploymentData('abaxcaller')
+  const abaxcaller = await deployContract(api, account, abi, wasm, 'new', [
+    ABAX_ADDRESS_TESTNET,
+    address,
+  ])
+
+  // Write contract addresses to `{contract}/{network}.ts` file(s)
+  await writeContractAddresses(chain.network, {
+    abaxcaller,
+  })
 }
 
 const deployContracts = async () => {
@@ -124,9 +129,9 @@ const deployContracts = async () => {
 
     await deploy_psp22()
 
-    await deploy_abaxcaller()
+    const address = await deploy_andromedacaller()
 
-    await deploy_andromedacaller()
+    await deploy_abaxcaller(address)
 
     console.log('\nDeployments completed successfully')
   } catch (error) {
