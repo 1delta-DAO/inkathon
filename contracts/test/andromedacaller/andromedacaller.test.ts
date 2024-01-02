@@ -1,4 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import { ContractPromise } from '@polkadot/api-contract'
 import { Keyring } from '@polkadot/keyring'
 import { KeyringPair } from '@polkadot/keyring/types'
 import { BN } from 'bn.js'
@@ -25,6 +26,13 @@ describe('Andromedacaller contract interactions', () => {
   let account: KeyringPair
   let andromedaCaller: AndromedaCaller
   let router: AndromedaRouter
+  let callCaller: (functionName: string, args: any[], caller?: KeyringPair) => Promise<any>
+  let callContract: (
+    contract: ContractPromise,
+    functionName: string,
+    args: any[],
+    caller?: KeyringPair,
+  ) => Promise<any>
 
   beforeAll(async () => {
     const provider = new WsProvider(ENDPOINT)
@@ -32,6 +40,20 @@ describe('Andromedacaller contract interactions', () => {
     account = new Keyring({ type: 'sr25519' }).addFromUri('//Alice', { name: 'Alice' })
     andromedaCaller = new AndromedaCaller(address, account, api)
     router = new AndromedaRouter(ANDROMEDA_ROUTER_ADDRESS, account, api)
+
+    callContract = async (
+      contract: ContractPromise,
+      functionName: string,
+      args: any[],
+      caller: KeyringPair,
+    ) => {
+      await contractTx(api, caller ?? account, contract, functionName, args).catch((error) => {
+        console.error(functionName, error)
+      })
+    }
+
+    callCaller = async (functionName: string, args: any[], caller?: KeyringPair) =>
+      await callContract(andromedaCaller.nativeContract, functionName, args, caller)
   })
 
   afterAll(async () => {
@@ -51,45 +73,21 @@ describe('Andromedacaller contract interactions', () => {
       // approve tokenA for liquidity deposit: owner = account, spender = AndromedaCaller
       const tokenA = new PSP22(ASSETS[assetA].address, account, api)
       const approveTokenADepositArgs = [address, depositAmount[assetA]]
-      await contractTx(
-        api,
-        account,
-        tokenA.nativeContract,
-        TOKEN_FUNCTION_APPROVE,
-        approveTokenADepositArgs,
-      ).catch((error) => {
-        console.error('Approve tokenA transaction error:', error)
-      })
+      await callContract(tokenA.nativeContract, TOKEN_FUNCTION_APPROVE, approveTokenADepositArgs)
 
       // approve tokenB for liquidity deposit: owner = account, spender = AndromedaCaller
       const tokenB = new PSP22(ASSETS[assetB].address, account, api)
       const approveTokenBDepositArgs = [address, depositAmount[assetB]]
-      await contractTx(
-        api,
-        account,
-        tokenB.nativeContract,
-        TOKEN_FUNCTION_APPROVE,
-        approveTokenBDepositArgs,
-      ).catch((error) => {
-        console.error('Approve tokenB transaction error:', error)
-      })
+      await callContract(tokenB.nativeContract, TOKEN_FUNCTION_APPROVE, approveTokenBDepositArgs)
 
       // call create_liquidity_pool function in AndromedaCaller contract
-      const createLiquidityPool = [
+      const createLiquidityPoolArgs = [
         ASSETS[assetA].address,
         ASSETS[assetB].address,
         depositAmount[assetA],
         depositAmount[assetB],
       ]
-      await contractTx(
-        api,
-        account,
-        andromedaCaller.nativeContract,
-        CALLER_FUNCTION_CREATE_PSP22_LIQUIDITY_POOL,
-        createLiquidityPool,
-      ).catch((error) => {
-        console.error('Create pool transaction error:', error)
-      })
+      await callCaller(CALLER_FUNCTION_CREATE_PSP22_LIQUIDITY_POOL, createLiquidityPoolArgs)
 
       // get created pool address
       const poolAddress = (
@@ -135,27 +133,11 @@ describe('Andromedacaller contract interactions', () => {
 
       // approve tokenA for liquidity deposit: owner = account, spender = AndromedaCaller
       const approveTokenADepositArgs = [address, depositAmount[assetA]]
-      await contractTx(
-        api,
-        account,
-        tokenA.nativeContract,
-        TOKEN_FUNCTION_APPROVE,
-        approveTokenADepositArgs,
-      ).catch((error) => {
-        console.error('Approve tokenA transaction error:', error)
-      })
+      await callContract(tokenA.nativeContract, TOKEN_FUNCTION_APPROVE, approveTokenADepositArgs)
 
       // approve tokenB for liquidity deposit: owner = account, spender = AndromedaCaller
       const approveTokenBDepositArgs = [address, depositAmount[assetB]]
-      await contractTx(
-        api,
-        account,
-        tokenB.nativeContract,
-        TOKEN_FUNCTION_APPROVE,
-        approveTokenBDepositArgs,
-      ).catch((error) => {
-        console.error('Approve tokenB transaction error:', error)
-      })
+      await callContract(tokenB.nativeContract, TOKEN_FUNCTION_APPROVE, approveTokenBDepositArgs)
 
       // call create_liquidity_pool function in AndromedaCaller contract
       const createLiquidityPoolArgs = [
@@ -164,15 +146,7 @@ describe('Andromedacaller contract interactions', () => {
         depositAmount[assetA],
         depositAmount[assetB],
       ]
-      await contractTx(
-        api,
-        account,
-        andromedaCaller.nativeContract,
-        CALLER_FUNCTION_CREATE_PSP22_LIQUIDITY_POOL,
-        createLiquidityPoolArgs,
-      ).catch((error) => {
-        console.error('Create pool transaction error:', error)
-      })
+      await callCaller(CALLER_FUNCTION_CREATE_PSP22_LIQUIDITY_POOL, createLiquidityPoolArgs)
 
       // get created pool address
       const poolAddress = (
@@ -187,28 +161,12 @@ describe('Andromedacaller contract interactions', () => {
 
       // approve for swap: owner = account, spender = AndromedaCaller
       const approveTokenSwapArgs = [address, swapAmountTokenB]
-      await contractTx(
-        api,
-        account,
-        tokenB.nativeContract,
-        TOKEN_FUNCTION_APPROVE,
-        approveTokenSwapArgs,
-      ).catch((error) => {
-        console.error('Approve token for swap transaction error:', error)
-      })
+      await callContract(tokenB.nativeContract, TOKEN_FUNCTION_APPROVE, approveTokenSwapArgs)
 
       // swap tokenB for tokenA
       const slippage = 1
       const swapArgs = [ASSETS[assetB].address, ASSETS[assetA].address, swapAmountTokenB, slippage]
-      await contractTx(
-        api,
-        account,
-        andromedaCaller.nativeContract,
-        CALLER_FUNCTION_SWAP_PSP22_TOKENS,
-        swapArgs,
-      ).catch((error) => {
-        console.error('Swap transaction error:', error)
-      })
+      await callCaller(CALLER_FUNCTION_SWAP_PSP22_TOKENS, swapArgs)
 
       // view tokenA balance for verification
       const newTokenABalance = (await tokenA.query.balanceOf(account.address)).value.unwrap()
