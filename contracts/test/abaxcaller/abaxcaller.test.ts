@@ -2,6 +2,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ContractPromise } from '@polkadot/api-contract'
 import { Keyring } from '@polkadot/keyring'
 import { IKeyringPair } from '@polkadot/types/types'
+import { u8aToHex } from '@polkadot/util'
 import { ASSETS } from '../../data/assets'
 import callerAbiPath from '../../deployments/abaxcaller/abaxcaller.json'
 import { address } from '../../deployments/abaxcaller/development'
@@ -653,8 +654,15 @@ describe('Abaxcaller contract interactions', () => {
         })
 
       // call flash loan function in AbaxCaller contract
-      const encodedAccountId = api.createType('AccountId', account.address).toHex()
-      const flashLoanArgs = [address, [ASSETS[asset].address], [flashLoanAmount], encodedAccountId]
+      const encodedAccountId = api.createType('AccountId', account.address)
+      const encodedFlag = new Uint8Array([1])
+      const encodedAssetId = api.createType('AccountId', ASSETS[asset].address)
+      const bytes = Uint8Array.from([
+        ...encodedAccountId.toU8a(),
+        ...encodedFlag,
+        ...encodedAssetId.toU8a(),
+      ])
+      const flashLoanArgs = [address, [ASSETS[asset].address], [flashLoanAmount], u8aToHex(bytes)]
       await contractTx(
         api,
         account,
