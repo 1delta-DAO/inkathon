@@ -12,7 +12,7 @@ import PSP22 from '../../typed_contracts/contracts/psp22'
 import { contractTx } from '../helpers'
 
 const TIMEOUT = 60000
-const ENDPOINT = 'ws://localhost:9944'
+const ENDPOINT = process.env.LOCAL_ENDPOINT
 
 const ANDROMEDA_ROUTER_ADDRESS = '5ErbVfJHQSnFL9cERSP73v2EaaBJCxW16VuZiX4qv63KWS1T'
 
