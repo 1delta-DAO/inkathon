@@ -15,13 +15,17 @@ mod abaxcaller {
     use ink::{contract_ref, prelude::vec::Vec};
     use openbrush::contracts::psp22::PSP22Error;
     use scale::Decode;
+    use scale::Encode;
+    use scale::Input;
 
     #[ink(event)]
     pub struct FlashLoanTaken {
         assets: Vec<AccountId>,
         amounts: Vec<u128>,
         fees: Vec<u128>,
-        receiver_params: Vec<u8>,
+        eoa_address: AccountId,
+        is_open_position: bool,
+        secondary_asset: AccountId,
     }
 
     #[ink(storage)]
@@ -39,6 +43,34 @@ mod abaxcaller {
                 lending_pool_borrow: abax_address.into(),
                 lending_pool_deposit: abax_address.into(),
             }
+        }
+
+        // internal functions
+        fn encode_data(&mut self, eoa: AccountId, flag: bool, asset: AccountId) -> Vec<u8> {
+            let mut encoded_data: Vec<u8> = Vec::new();
+
+            encoded_data.extend_from_slice(&eoa.encode());
+
+            encoded_data.push(if flag { 1 } else { 0 });
+
+            encoded_data.extend_from_slice(&asset.encode());
+
+            encoded_data
+        }
+
+        fn decode_data(
+            &mut self,
+            encoded_data: Vec<u8>,
+        ) -> Result<(AccountId, bool, AccountId), scale::Error> {
+            let mut data = encoded_data.as_slice();
+
+            let account_id1 = AccountId::decode(&mut data)?;
+
+            let flag = data.read_byte().map(|byte| byte & 1 == 1)?;
+
+            let account_id2 = AccountId::decode(&mut data)?;
+
+            Ok((account_id1, flag, account_id2))
         }
 
         // lending_pool_deposit functions
@@ -129,32 +161,28 @@ mod abaxcaller {
             fees: Vec<u128>,
             receiver_params: Vec<u8>,
         ) -> Result<(), FlashLoanReceiverError> {
-            self.env().emit_event(FlashLoanTaken {
-                assets: assets.clone(),
-                amounts: amounts.clone(),
-                fees: fees.clone(),
-                receiver_params: receiver_params.clone(),
-            });
-
             let caller: AccountId = Self::env().caller();
 
             if caller != self.abax_account || receiver_params.len() == 0 {
                 return Err(FlashLoanReceiverError::CantApprove);
             }
 
-            if assets.len() != amounts.len() || assets.len() != fees.len() || assets.len() == 0 {
+            if assets.len() != amounts.len() || assets.len() != fees.len() || assets.len() != 1 {
                 return Err(FlashLoanReceiverError::AssetNotMintable);
             }
 
-            let result_account_id: Result<AccountId, _> =
-                AccountId::decode(&mut &receiver_params[..]);
+            let (eoa, is_open, sec_asset) = self
+                .decode_data(receiver_params)
+                .map_err(|_| FlashLoanReceiverError::CantApprove)?;
 
-            let account_id = match result_account_id {
-                Ok(id) => id,
-                Err(_) => {
-                    return Err(FlashLoanReceiverError::CantApprove);
-                }
-            };
+            self.env().emit_event(FlashLoanTaken {
+                assets: assets.clone(),
+                amounts: amounts.clone(),
+                fees: fees.clone(),
+                eoa_address: eoa.clone(),
+                is_open_position: is_open.clone(),
+                secondary_asset: sec_asset.clone(),
+            });
 
             for ((&asset, &amount), &fee) in assets.iter().zip(amounts.iter()).zip(fees.iter()) {
                 if amount <= 0 {
