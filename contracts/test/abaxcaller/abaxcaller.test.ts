@@ -10,7 +10,7 @@ import PSP22 from '../../typed_contracts/contracts/psp22'
 import { contractTx } from '../helpers'
 
 const TIMEOUT = 60000
-const ENDPOINT = 'ws://localhost:9944'
+const ENDPOINT = process.env.LOCAL_ENDPOINT
 
 const ABAX_ADDRESS = '5GBai32Vbzizw3xidVUwkjzFydaas7s2B8uudgtiguzmW8yn'
 const ABAX_FUNCTION_SET_AS_COLLATERAL = 'LendingPoolBorrow::set_as_collateral'
@@ -31,7 +31,8 @@ describe('Abaxcaller contract interactions', () => {
   let account: KeyringPair
   let abaxCaller: AbaxCaller
   let abax: Abax
-
+  let callAbax: (functionName: string, args: any[], caller?: KeyringPair) => Promise<any>
+  
   beforeAll(async () => {
     const provider = new WsProvider(ENDPOINT)
     api = await ApiPromise.create({ provider })
@@ -39,6 +40,17 @@ describe('Abaxcaller contract interactions', () => {
 
     abaxCaller = new AbaxCaller(address, account, api)
     abax = new Abax(ABAX_ADDRESS, account, api)
+
+    // call abax protocol from account via name and args
+    callAbax = async (functionName: string, args: any[], caller?: KeyringPair) => await contractTx(
+      api,
+      caller ?? account,
+      abax.nativeContract,
+      functionName,
+      args,
+    ).catch((error) => {
+      console.error('Set collateral transaction error:', error)
+    })
   })
 
   afterAll(async () => {
@@ -78,15 +90,7 @@ describe('Abaxcaller contract interactions', () => {
 
       // call deposit function in AbaxCaller contract
       const depositArgs = [ASSETS[asset].address, depositAmount, []]
-      await contractTx(
-        api,
-        account,
-        abaxCaller.nativeContract,
-        CALLER_FUNCTION_DEPOSIT,
-        depositArgs,
-      ).catch((error) => {
-        console.error('Deposit transaction error:', error)
-      })
+      await callAbax(CALLER_FUNCTION_DEPOSIT, depositArgs)
 
       // view user reserve data for verification
       const reserveData = (
