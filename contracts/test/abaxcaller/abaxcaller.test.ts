@@ -1,19 +1,19 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ContractPromise } from '@polkadot/api-contract'
 import { Keyring } from '@polkadot/keyring'
-import { IKeyringPair } from '@polkadot/types/types'
+import { KeyringPair } from '@polkadot/keyring/types'
+import { BN } from '@polkadot/util'
 import { ASSETS } from '../../data/assets'
-import callerAbiPath from '../../deployments/abaxcaller/abaxcaller.json'
-import { address } from '../../deployments/abaxcaller/development'
-import psp22AbiPath from '../../deployments/psp22/psp22.json'
-import { contractQuery, contractTx, decodeOutput, getPsp22Balance } from '../helpers'
-import abaxAbiPath from '../metadata/abax.json'
+import { address } from '../../deployments/addresses/abaxcaller/development'
+import Abax from '../../typed_contracts/contracts/abax'
+import AbaxCaller from '../../typed_contracts/contracts/abaxcaller'
+import PSP22 from '../../typed_contracts/contracts/psp22'
+import { contractTx } from '../helpers'
 
 const TIMEOUT = 60000
-const ENDPOINT = 'ws://localhost:9944'
+const ENDPOINT = process.env.LOCAL_ENDPOINT
 
 const ABAX_ADDRESS = '5GBai32Vbzizw3xidVUwkjzFydaas7s2B8uudgtiguzmW8yn'
-const ABAX_FUNCTION_VIEW_USER_RESERVE_DATA = 'LendingPoolView::view_user_reserve_data'
 const ABAX_FUNCTION_SET_AS_COLLATERAL = 'LendingPoolBorrow::set_as_collateral'
 const ABAX_FUNCTION_FLASH_LOAN = 'LendingPoolFlash::flash_loan'
 
@@ -24,22 +24,46 @@ const CALLER_FUNCTION_BORROW = 'borrow'
 const CALLER_FUNCTION_REPAY = 'repay'
 
 const TOKEN_FUNCTION_APPROVE = 'PSP22::approve'
-const TOKEN_FUNCTION_BALANCEOF = 'PSP22::balanceOf'
 
-const MAXUINT128 = 2n ** 128n - 1n
+const MAXUINT128 = new BN(2).pow(new BN(128)).sub(new BN(1))
 
 describe('Abaxcaller contract interactions', () => {
   let api: ApiPromise
-  let account: IKeyringPair
-  let callerContract: ContractPromise
-  let abaxContract: ContractPromise
+  let account: KeyringPair
+  let abax: Abax
+  let callAbaxCaller: (functionName: string, args: any[], caller?: KeyringPair) => Promise<any>
+  let callAbax: (functionName: string, args: any[], caller?: KeyringPair) => Promise<any>
+  let callContract: (
+    contract: ContractPromise,
+    functionName: string,
+    args: any[],
+    caller?: KeyringPair,
+  ) => Promise<any>
 
   beforeAll(async () => {
     const provider = new WsProvider(ENDPOINT)
     api = await ApiPromise.create({ provider })
     account = new Keyring({ type: 'sr25519' }).addFromUri('//Alice', { name: 'Alice' })
-    callerContract = new ContractPromise(api, callerAbiPath, address)
-    abaxContract = new ContractPromise(api, abaxAbiPath, ABAX_ADDRESS)
+
+    abax = new Abax(ABAX_ADDRESS, account, api)
+    const abaxCaller = new AbaxCaller(address, account, api)
+
+    callContract = async (
+      contract: ContractPromise,
+      functionName: string,
+      args: any[],
+      caller: KeyringPair,
+    ) => {
+      await contractTx(api, caller ?? account, contract, functionName, args).catch((error) => {
+        console.error(functionName, error)
+      })
+    }
+
+    callAbax = async (functionName: string, args: any[], caller?: KeyringPair) =>
+      await callContract(abax.nativeContract, functionName, args, caller)
+
+    callAbaxCaller = async (functionName: string, args: any[], caller?: KeyringPair) =>
+      await callContract(abaxCaller.nativeContract, functionName, args, caller)
   })
 
   afterAll(async () => {
@@ -50,83 +74,28 @@ describe('Abaxcaller contract interactions', () => {
     'Contract function call deposit',
     async () => {
       const asset = 'DAI'
-      const depositAmount = 100n * 10n ** BigInt(ASSETS[asset].decimals)
+      const depositAmount = new BN(100).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
 
       // max approve: owner = AbaxCaller, spender = AbaxLendingPool
       const maxApproveArgs = [ASSETS[asset].address, ABAX_ADDRESS, MAXUINT128]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_APPROVE,
-        undefined,
-        maxApproveArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveArgs)
 
       // approve for deposit: owner = account, spender = AbaxCaller
-      const tokenContract = new ContractPromise(api, psp22AbiPath, ASSETS[asset].address)
+      const token = new PSP22(ASSETS[asset].address, account, api)
       const approveDepositArgs = [address, depositAmount]
-      await contractTx(
-        api,
-        account,
-        tokenContract,
-        TOKEN_FUNCTION_APPROVE,
-        undefined,
-        approveDepositArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
       const depositArgs = [ASSETS[asset].address, depositAmount, []]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_DEPOSIT,
-        undefined,
-        depositArgs,
-      )
-        .then((result) => {
-          console.log('Deposit transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Deposit transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_DEPOSIT, depositArgs)
 
       // view user reserve data for verification
-      const viewUserReserveDataArgs = [ASSETS[asset].address, account.address]
-      const result = await contractQuery(
-        api,
-        account.address,
-        abaxContract,
-        ABAX_FUNCTION_VIEW_USER_RESERVE_DATA,
-        undefined,
-        viewUserReserveDataArgs,
-      )
+      const reserveData = (
+        await abax.query.viewUserReserveData(ASSETS[asset].address, account.address)
+      ).value.unwrap()
 
-      const { output, isError, decodedOutput } = decodeOutput(
-        result,
-        abaxContract,
-        ABAX_FUNCTION_VIEW_USER_RESERVE_DATA,
-      )
-
-      if (isError) {
-        console.error('Error', output)
-      }
-
-      const realizedDepositAmount = BigInt(parseInt(output['deposit'].replace(/,/g, ''), 10))
-      expect(realizedDepositAmount).toBe(depositAmount)
+      const realizedDepositAmount = reserveData.deposit.rawNumber
+      expect(realizedDepositAmount.eq(depositAmount)).toBeTruthy()
     },
     TIMEOUT,
   )
@@ -135,127 +104,42 @@ describe('Abaxcaller contract interactions', () => {
     'Contract function calls deposit, withdraw',
     async () => {
       const asset = 'WETH'
-      const balances = {
-        [asset]: await getPsp22Balance(api, account, ASSETS[asset].address),
-      }
-      const depositAmount = 5n * 10n ** BigInt(ASSETS[asset].decimals)
-      const withdrawAmount = 3n * 10n ** BigInt(ASSETS[asset].decimals)
+      const token = new PSP22(ASSETS[asset].address, account, api)
+
+      const initBalance = (await token.query.balanceOf(account.address)).value.unwrap().rawNumber
+      const depositAmount = new BN(5).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
+      const withdrawAmount = new BN(3).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
 
       // max approve: owner = AbaxCaller, spender = AbaxLendingPool
       const maxApproveArgs = [ASSETS[asset].address, ABAX_ADDRESS, MAXUINT128]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_APPROVE,
-        undefined,
-        maxApproveArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveArgs)
 
       // approve for deposit: owner = account, spender = AbaxCaller
-      const tokenContract = new ContractPromise(api, psp22AbiPath, ASSETS[asset].address)
       const approveDepositArgs = [address, depositAmount]
-      await contractTx(
-        api,
-        account,
-        tokenContract,
-        TOKEN_FUNCTION_APPROVE,
-        undefined,
-        approveDepositArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
       const depositArgs = [ASSETS[asset].address, depositAmount, []]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_DEPOSIT,
-        undefined,
-        depositArgs,
-      )
-        .then((result) => {
-          console.log('Deposit transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Deposit transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_DEPOSIT, depositArgs)
 
       // approve collateral token for withdrawal: owner = account, spender = AbaxCaller
       const approveCollateralTokenArgs = [address, withdrawAmount]
-      const collateralTokenContract = new ContractPromise(
-        api,
-        psp22AbiPath,
-        ASSETS[asset].aTokenAddress,
-      )
-      await contractTx(
-        api,
-        account,
-        collateralTokenContract,
+      const collateralToken = new PSP22(ASSETS[asset].aTokenAddress, account, api)
+      await callContract(
+        collateralToken.nativeContract,
         TOKEN_FUNCTION_APPROVE,
-        undefined,
         approveCollateralTokenArgs,
       )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
 
       // call withdraw function in AbaxCaller contract
       const withdrawArgs = [ASSETS[asset].address, withdrawAmount, []]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_REDEEM,
-        undefined,
-        withdrawArgs,
-      )
-        .then((result) => {
-          console.log('Withdraw transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Withdraw transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_REDEEM, withdrawArgs)
 
       // view token balance for verification
-      const tokenBalanceArgs = [account.address]
-      const result = await contractQuery(
-        api,
-        account.address,
-        tokenContract,
-        TOKEN_FUNCTION_BALANCEOF,
-        undefined,
-        tokenBalanceArgs,
-      )
+      const realizedAmount = (await token.query.balanceOf(account.address)).value.unwrap().rawNumber
 
-      const { output, isError, decodedOutput } = decodeOutput(
-        result,
-        tokenContract,
-        TOKEN_FUNCTION_BALANCEOF,
-      )
-
-      if (isError) {
-        console.error('Error', output)
-      }
-
-      const realizedAmount = BigInt(parseInt(decodedOutput.replace(/,/g, ''), 10))
-      const expectedAmount = balances[asset] - depositAmount + withdrawAmount
-      expect(realizedAmount).toBe(expectedAmount)
+      const expectedAmount = initBalance.sub(depositAmount).add(withdrawAmount)
+      expect(realizedAmount.eq(expectedAmount)).toBeTruthy()
     },
     TIMEOUT,
   )
@@ -264,133 +148,42 @@ describe('Abaxcaller contract interactions', () => {
     'Contract function calls deposit, borrow',
     async () => {
       const asset = 'USDC'
-      const balances = {
-        [asset]: await getPsp22Balance(api, account, ASSETS[asset].address),
-      }
-      const depositAmount = 5000n * 10n ** BigInt(ASSETS[asset].decimals)
-      const borrowAmount = 100n * 10n ** BigInt(ASSETS[asset].decimals)
+      const token = new PSP22(ASSETS[asset].address, account, api)
+
+      const initBalance = (await token.query.balanceOf(account.address)).value.unwrap().rawNumber
+      const depositAmount = new BN(5000).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
+      const borrowAmount = new BN(100).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
 
       // max approve: owner = AbaxCaller, spender = AbaxLendingPool
       const maxApproveArgs = [ASSETS[asset].address, ABAX_ADDRESS, MAXUINT128]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_APPROVE,
-        undefined,
-        maxApproveArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveArgs)
 
       // approve for deposit: owner = account, spender = AbaxCaller
-      const tokenContract = new ContractPromise(api, psp22AbiPath, ASSETS[asset].address)
       const approveDepositArgs = [address, depositAmount]
-      await contractTx(
-        api,
-        account,
-        tokenContract,
-        TOKEN_FUNCTION_APPROVE,
-        undefined,
-        approveDepositArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
       const depositArgs = [ASSETS[asset].address, depositAmount, []]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_DEPOSIT,
-        undefined,
-        depositArgs,
-      )
-        .then((result) => {
-          console.log('Deposit transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Deposit transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_DEPOSIT, depositArgs)
 
       // approve for borrow: owner = account, spender = AbaxCaller
-      const debtTokenContract = new ContractPromise(api, psp22AbiPath, ASSETS[asset].vTokenAddress)
+      const debtToken = new PSP22(ASSETS[asset].vTokenAddress, account, api)
       const approveBorrowArgs = [address, borrowAmount]
-      await contractTx(
-        api,
-        account,
-        debtTokenContract,
-        TOKEN_FUNCTION_APPROVE,
-        undefined,
-        approveBorrowArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callContract(debtToken.nativeContract, TOKEN_FUNCTION_APPROVE, approveBorrowArgs)
 
-      // Set deposit as collateral
+      // set deposit as collateral
       const setCollateralArgs = [ASSETS[asset].address, true]
-      await contractTx(
-        api,
-        account,
-        abaxContract,
-        ABAX_FUNCTION_SET_AS_COLLATERAL,
-        undefined,
-        setCollateralArgs,
-      )
-        .then((result) => {
-          console.log('Set collateral transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Set collateral  transaction error:', error)
-        })
+      await callAbax(ABAX_FUNCTION_SET_AS_COLLATERAL, setCollateralArgs)
 
       // call borrow function in AbaxCaller contract
       const borrowArgs = [ASSETS[asset].address, borrowAmount, []]
-      await contractTx(api, account, callerContract, CALLER_FUNCTION_BORROW, undefined, borrowArgs)
-        .then((result) => {
-          console.log('Borrow transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Borrow transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_BORROW, borrowArgs)
 
       // view token balance for verification
-      const tokenBalanceArgs = [account.address]
-      const result = await contractQuery(
-        api,
-        account.address,
-        tokenContract,
-        TOKEN_FUNCTION_BALANCEOF,
-        undefined,
-        tokenBalanceArgs,
-      )
+      const realizedAmount = (await token.query.balanceOf(account.address)).value.unwrap().rawNumber
 
-      const { output, isError, decodedOutput } = decodeOutput(
-        result,
-        tokenContract,
-        TOKEN_FUNCTION_BALANCEOF,
-      )
-
-      if (isError) {
-        console.error('Error', output)
-      }
-
-      const realizedAmount = BigInt(parseInt(decodedOutput.replace(/,/g, ''), 10))
-      const expectedAmount = balances[asset] - depositAmount + borrowAmount
-      expect(realizedAmount).toBe(expectedAmount)
+      const expectedAmount = initBalance.sub(depositAmount).add(borrowAmount)
+      expect(realizedAmount.eq(expectedAmount)).toBeTruthy()
     },
     TIMEOUT,
   )
@@ -398,162 +191,52 @@ describe('Abaxcaller contract interactions', () => {
   test(
     'Contract function calls deposit, borrow, repay',
     async () => {
-      const asset = 'BTC'
-      const balances = {
-        [asset]: await getPsp22Balance(api, account, ASSETS[asset].address),
-      }
-      const depositAmount = 5n * 10n ** BigInt(ASSETS[asset].decimals)
-      const borrowAmount = 2n * 10n ** BigInt(ASSETS[asset].decimals)
-      const repayAmount = 1n * 10n ** BigInt(ASSETS[asset].decimals)
+      const asset = 'AZERO'
+      const token = new PSP22(ASSETS[asset].address, account, api)
+
+      const initBalance = (await token.query.balanceOf(account.address)).value.unwrap().rawNumber
+      const depositAmount = new BN(500).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
+      const borrowAmount = new BN(200).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
+      const repayAmount = new BN(100).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
 
       // max approve: owner = AbaxCaller, spender = AbaxLendingPool
       const maxApproveArgs = [ASSETS[asset].address, ABAX_ADDRESS, MAXUINT128]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_APPROVE,
-        undefined,
-        maxApproveArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveArgs)
 
       // approve for deposit: owner = account, spender = AbaxCaller
-      const tokenContract = new ContractPromise(api, psp22AbiPath, ASSETS[asset].address)
       const approveDepositArgs = [address, depositAmount]
-      await contractTx(
-        api,
-        account,
-        tokenContract,
-        TOKEN_FUNCTION_APPROVE,
-        undefined,
-        approveDepositArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
       const depositArgs = [ASSETS[asset].address, depositAmount, []]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_DEPOSIT,
-        undefined,
-        depositArgs,
-      )
-        .then((result) => {
-          console.log('Deposit transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Deposit transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_DEPOSIT, depositArgs)
 
       // approve for borrow: owner = account, spender = AbaxCaller
-      const debtTokenContract = new ContractPromise(api, psp22AbiPath, ASSETS[asset].vTokenAddress)
+      const debtToken = new PSP22(ASSETS[asset].vTokenAddress, account, api)
       const approveBorrowArgs = [address, borrowAmount]
-      await contractTx(
-        api,
-        account,
-        debtTokenContract,
-        TOKEN_FUNCTION_APPROVE,
-        undefined,
-        approveBorrowArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callContract(debtToken.nativeContract, TOKEN_FUNCTION_APPROVE, approveBorrowArgs)
 
-      // Set deposit as collateral
+      // set deposit as collateral
       const setCollateralArgs = [ASSETS[asset].address, true]
-      await contractTx(
-        api,
-        account,
-        abaxContract,
-        ABAX_FUNCTION_SET_AS_COLLATERAL,
-        undefined,
-        setCollateralArgs,
-      )
-        .then((result) => {
-          console.log('Set collateral transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Set collateral transaction error:', error)
-        })
+      await callAbax(ABAX_FUNCTION_SET_AS_COLLATERAL, setCollateralArgs)
 
       // call borrow function in AbaxCaller contract
       const borrowArgs = [ASSETS[asset].address, borrowAmount, []]
-      await contractTx(api, account, callerContract, CALLER_FUNCTION_BORROW, undefined, borrowArgs)
-        .then((result) => {
-          console.log('Borrow transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Borrow transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_BORROW, borrowArgs)
 
       // approve for repay: owner = account, spender = AbaxCaller
       const approveRepayArgs = [address, repayAmount]
-      await contractTx(
-        api,
-        account,
-        tokenContract,
-        TOKEN_FUNCTION_APPROVE,
-        undefined,
-        approveRepayArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveRepayArgs)
 
       // call repay function in AbaxCaller contract
       const repayArgs = [ASSETS[asset].address, repayAmount, []]
-      await contractTx(api, account, callerContract, CALLER_FUNCTION_REPAY, undefined, repayArgs)
-        .then((result) => {
-          console.log('Repay transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Repay transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_REPAY, repayArgs)
 
       // view token balance for verification
-      const tokenBalanceArgs = [account.address]
-      const result = await contractQuery(
-        api,
-        account.address,
-        tokenContract,
-        TOKEN_FUNCTION_BALANCEOF,
-        undefined,
-        tokenBalanceArgs,
-      )
+      const realizedAmount = (await token.query.balanceOf(account.address)).value.unwrap().rawNumber
 
-      const { output, isError, decodedOutput } = decodeOutput(
-        result,
-        tokenContract,
-        TOKEN_FUNCTION_BALANCEOF,
-      )
-
-      if (isError) {
-        console.error('Error', output)
-      }
-
-      const realizedAmount = BigInt(parseInt(decodedOutput.replace(/,/g, ''), 10))
-      const expectedAmount = balances[asset] - depositAmount + borrowAmount - repayAmount
-      expect(realizedAmount).toBe(expectedAmount)
+      const expectedAmount = initBalance.sub(depositAmount).add(borrowAmount).sub(repayAmount)
+      expect(realizedAmount.eq(expectedAmount)).toBeTruthy()
     },
     TIMEOUT,
   )
@@ -562,138 +245,41 @@ describe('Abaxcaller contract interactions', () => {
     'Contract function calls deposit, flashloan (deposit and borrow)',
     async () => {
       const asset = 'DOT'
-      const depositAmount = 200n * 10n ** BigInt(ASSETS[asset].decimals)
-      const flashLoanAmount = 50n * 10n ** BigInt(ASSETS[asset].decimals)
+      const depositAmount = new BN(200).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
+      const flashLoanAmount = new BN(50).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
 
       // max approve: owner = AbaxCaller, spender = AbaxLendingPool
       const maxApproveArgs = [ASSETS[asset].address, ABAX_ADDRESS, MAXUINT128]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_APPROVE,
-        undefined,
-        maxApproveArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveArgs)
 
       // approve for deposit: owner = account, spender = AbaxCaller
-      const tokenContract = new ContractPromise(api, psp22AbiPath, ASSETS[asset].address)
+      const token = new PSP22(ASSETS[asset].address, account, api)
       const approveDepositArgs = [address, depositAmount]
-      await contractTx(
-        api,
-        account,
-        tokenContract,
-        TOKEN_FUNCTION_APPROVE,
-        undefined,
-        approveDepositArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
       const depositArgs = [ASSETS[asset].address, depositAmount, []]
-      await contractTx(
-        api,
-        account,
-        callerContract,
-        CALLER_FUNCTION_DEPOSIT,
-        undefined,
-        depositArgs,
-      )
-        .then((result) => {
-          console.log('Deposit transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Deposit transaction error:', error)
-        })
+      await callAbaxCaller(CALLER_FUNCTION_DEPOSIT, depositArgs)
 
       // approve for borrow in flash Loan: owner = account, spender = AbaxCaller
-      const debtTokenContract = new ContractPromise(api, psp22AbiPath, ASSETS[asset].vTokenAddress)
+      const debtToken = new PSP22(ASSETS[asset].vTokenAddress, account, api)
       const approveBorrowArgs = [address, flashLoanAmount]
-      await contractTx(
-        api,
-        account,
-        debtTokenContract,
-        TOKEN_FUNCTION_APPROVE,
-        undefined,
-        approveBorrowArgs,
-      )
-        .then((result) => {
-          console.log('Approve transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Approve transaction error:', error)
-        })
+      await callContract(debtToken.nativeContract, TOKEN_FUNCTION_APPROVE, approveBorrowArgs)
 
-      // Set deposit as collateral
+      // set deposit as collateral
       const setCollateralArgs = [ASSETS[asset].address, true]
-      await contractTx(
-        api,
-        account,
-        abaxContract,
-        ABAX_FUNCTION_SET_AS_COLLATERAL,
-        undefined,
-        setCollateralArgs,
-      )
-        .then((result) => {
-          console.log('Set collateral transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Set collateral transaction error:', error)
-        })
+      await callAbax(ABAX_FUNCTION_SET_AS_COLLATERAL, setCollateralArgs)
 
       // call flash loan function in AbaxCaller contract
       const encodedAccountId = api.createType('AccountId', account.address).toHex()
       const flashLoanArgs = [address, [ASSETS[asset].address], [flashLoanAmount], encodedAccountId]
-      await contractTx(
-        api,
-        account,
-        abaxContract,
-        ABAX_FUNCTION_FLASH_LOAN,
-        undefined,
-        flashLoanArgs,
-      )
-        .then((result) => {
-          console.log('Flash loan transaction finalized:', result.extrinsicHash)
-        })
-        .catch((error) => {
-          console.error('Flash loan transaction error:', error)
-        })
+      await callAbax(ABAX_FUNCTION_FLASH_LOAN, flashLoanArgs)
 
       // view token balance for verification
-      const tokenBalanceArgs = [account.address]
-      const result = await contractQuery(
-        api,
-        account.address,
-        debtTokenContract,
-        TOKEN_FUNCTION_BALANCEOF,
-        undefined,
-        tokenBalanceArgs,
-      )
+      const realizedAmount = (await debtToken.query.balanceOf(account.address)).value.unwrap()
+        .rawNumber
 
-      const { output, isError, decodedOutput } = decodeOutput(
-        result,
-        tokenContract,
-        TOKEN_FUNCTION_BALANCEOF,
-      )
-
-      if (isError) {
-        console.error('Error', output)
-      }
-
-      const realizedAmount = BigInt(parseInt(decodedOutput.replace(/,/g, ''), 10))
-      const expectedAmount = flashLoanAmount
-      expect(realizedAmount).toBeGreaterThanOrEqual(expectedAmount)
+      expect(realizedAmount.gte(flashLoanAmount)).toBeTruthy()
     },
     TIMEOUT,
   )

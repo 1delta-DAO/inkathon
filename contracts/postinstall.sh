@@ -8,9 +8,9 @@ set -eu
 if [[ ! -e deployments/greeter/development.ts ]]; then
     echo "Creating empty 'development.ts'…"
     if command -v touch &> /dev/null; then
-        touch deployments/greeter/development.ts
+        touch deployments/addresses/greeter/development.ts
     else
-        copy /b deployments/greeter/development.ts +,,
+        copy /b deployments/addresses/greeter/development.ts +,,
     fi
 else
     echo "Great, 'development.ts' already exists! Skipping…"
