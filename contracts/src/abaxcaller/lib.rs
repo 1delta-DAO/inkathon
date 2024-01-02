@@ -4,6 +4,10 @@ mod abax {
     pub mod traits;
 }
 
+mod andromedacaller {
+    pub mod traits;
+}
+
 #[ink::contract]
 mod abaxcaller {
 
@@ -12,6 +16,7 @@ mod abaxcaller {
     use crate::abax::traits::lending_pool::LendingPoolDeposit;
     use crate::abax::traits::lending_pool::LendingPoolError;
     use crate::abax::traits::psp22::PSP22;
+    use crate::andromedacaller::traits::andromedacaller::AndromedaCaller;
     use ink::{contract_ref, prelude::vec::Vec};
     use openbrush::contracts::psp22::PSP22Error;
     use scale::Decode;
@@ -33,15 +38,17 @@ mod abaxcaller {
         abax_account: AccountId,
         lending_pool_borrow: contract_ref!(LendingPoolBorrow),
         lending_pool_deposit: contract_ref!(LendingPoolDeposit),
+        andromeda_caller: contract_ref!(AndromedaCaller),
     }
 
     impl AbaxCaller {
         #[ink(constructor)]
-        pub fn new(abax_address: AccountId) -> Self {
+        pub fn new(abax_address: AccountId, andromedacaller_address: AccountId) -> Self {
             Self {
                 abax_account: abax_address,
                 lending_pool_borrow: abax_address.into(),
                 lending_pool_deposit: abax_address.into(),
+                andromeda_caller: andromedacaller_address.into(),
             }
         }
 
@@ -189,24 +196,27 @@ mod abaxcaller {
                     return Err(FlashLoanReceiverError::InsufficientBalance);
                 }
 
-                match self
-                    .lending_pool_deposit
-                    .deposit(asset, account_id, amount - fee, Vec::new())
-                {
-                    Ok(_) => {}
-                    Err(_) => {
-                        return Err(FlashLoanReceiverError::ExecuteOperationFailed);
-                    }
-                }
+                let balance = self
+                    .andromeda_caller
+                    .swap_psp22_tokens(asset, sec_asset, amount, 0)
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
 
-                match self
-                    .lending_pool_borrow
-                    .borrow(asset, account_id, amount, Vec::new())
-                {
-                    Ok(_) => {}
-                    Err(_) => {
-                        return Err(FlashLoanReceiverError::ExecuteOperationFailed);
-                    }
+                if is_open {
+                    self.lending_pool_deposit
+                        .deposit(sec_asset, eoa, balance, Vec::new())
+                        .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+
+                    self.lending_pool_borrow
+                        .borrow(asset, eoa, amount + fee, Vec::new())
+                        .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+                } else {
+                    self.lending_pool_borrow
+                        .repay(sec_asset, eoa, balance, Vec::new())
+                        .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+
+                    self.lending_pool_deposit
+                        .redeem(asset, eoa, amount + fee, Vec::new())
+                        .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
                 }
             }
 
