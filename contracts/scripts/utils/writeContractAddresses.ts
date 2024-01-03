@@ -11,9 +11,8 @@ export const writeContractAddresses = async (
   contractDeployments: ContractDeployments,
   metadata?: { [key: string]: string | number },
 ) => {
-  const baseDir = process.env.DIR || './deployments'
+  const baseDir = process.env.ADDRESSES || './deployments/addresses'
 
-  console.log()
   for (const [contractName, deployment] of Object.entries(contractDeployments)) {
     const relativePath = path.join(baseDir, contractName, `${networkId}.ts`)
     const absolutePath = path.join(path.resolve(), relativePath)

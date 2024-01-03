@@ -9,15 +9,16 @@ else
   test_path="./test/"
 fi
 
-echo "Opening a new terminal window for fork testnet script"
+echo "Opening a new terminal window for testnet fork"
 gnome-terminal -- pnpm run fork-testnet
 
-echo "Calling build script"
+echo "Running build script"
 pnpm run build
 
-echo "Calling deploy script"
+echo "Running deploy script"
 pnpm run deploy
 
 echo "Running Jest tests from path: $test_path"
 jest --runInBand "$test_path"
 
+pkill -f "pnpm run fork-testnet"

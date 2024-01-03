@@ -135,3 +135,9 @@ deployments/**/development.ts
 
 # Chopsticks fork data
 .fork-data
+
+# contract files
+deployments/files
+
+# typechain generated contracts
+typed_contracts

@@ -4,10 +4,10 @@ import { Keyring } from '@polkadot/keyring'
 import type { WeightV2 } from '@polkadot/types/interfaces'
 import { IKeyringPair } from '@polkadot/types/types'
 import { BN, BN_ONE, stringCamelCase } from '@polkadot/util'
-import { address } from '../../deployments/greeter/development'
-import abiPath from '../../deployments/greeter/greeter.json'
+import { address } from '../../deployments/addresses/greeter/development'
+import abiPath from '../../deployments/files/greeter/greeter.json'
 
-const ENDPOINT = 'ws://localhost:9944'
+const ENDPOINT = process.env.LOCAL_ENDPOINT
 const SET_MESSAGE_FUNCTION = 'set_message'
 const GREET_FUNCTION = 'greet'
 const MAX_CALL_WEIGHT = new BN(5_000_000_000_000).isub(BN_ONE)

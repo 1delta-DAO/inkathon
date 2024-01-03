@@ -2,6 +2,8 @@ import { ApiPromise } from '@polkadot/api'
 import type { WeightV2 } from '@polkadot/types/interfaces'
 import { BN, bnToBn } from '@polkadot/util'
 
+const GAS_LIMIT_MULTIPLIER = 1.01
+
 /**
  * Helper function that returns Weights V2 `gasLimit` object.
  */
@@ -35,4 +37,15 @@ export const getMaxGasLimit = (api: ApiPromise, reductionFactor = 0.8) => {
     : new BN(0)
 
   return getGasLimit(api, maxRefTime, maxProofSize)
+}
+
+export const getSafeGasLimit = (
+  api: ApiPromise,
+  weight: WeightV2,
+  multiplyBy: number = GAS_LIMIT_MULTIPLIER,
+) => {
+  const safeRefTime = weight.refTime.toBn().muln(multiplyBy)
+  const safeProofSize = weight.proofSize.toBn().muln(multiplyBy)
+
+  return getGasLimit(api, safeRefTime, safeProofSize)
 }

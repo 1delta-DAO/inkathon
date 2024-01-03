@@ -22,6 +22,8 @@
     "eslint": "eslint . --ext .js,.ts"
   },
   "devDependencies": {
+    "@727-ventures/typechain-polkadot": "^1.1.1",
+    "@727-ventures/typechain-types": "^1.1.2",
     "@acala-network/chopsticks": "^0.9.3",
     "@polkadot/api": "^10.10.1",
     "@polkadot/api-contract": "^10.10.1",
@@ -30,6 +32,7 @@
     "@polkadot/util": "^12.5.1",
     "@polkadot/util-crypto": "^12.5.1",
     "@scio-labs/use-inkathon": "^0.4.4",
+    "@types/bn.js": "^5.1.5",
     "@types/jest": "^29.5.11",
     "@types/node": "^18.18.9",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
