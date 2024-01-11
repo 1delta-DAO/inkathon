@@ -148,32 +148,34 @@ mod abaxcaller {
                 return Err(FlashLoanReceiverError::AssetNotMintable);
             }
 
+            let asset = assets[0];
+            let amount = amounts[0];
+            let fee = fees[0];
+
+            if amount <= 0 {
+                return Err(FlashLoanReceiverError::InsufficientBalance);
+            }
+
             let (eoa, margin_type, sec_asset): (AccountId, u8, AccountId) = self
                 .decode_data(receiver_params)
                 .map_err(|_| FlashLoanReceiverError::CantApprove)?;
 
-            for ((&asset, &amount), &fee) in assets.iter().zip(amounts.iter()).zip(fees.iter()) {
-                if amount <= 0 {
-                    return Err(FlashLoanReceiverError::InsufficientBalance);
-                }
+            if margin_type == 0 {
+                self.lending_pool_deposit
+                    .deposit(sec_asset, eoa, amount, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
 
-                if margin_type == 0 {
-                    self.lending_pool_deposit
-                        .deposit(sec_asset, eoa, amount, Vec::new())
-                        .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+                self.lending_pool_borrow
+                    .borrow(asset, eoa, amount + fee, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+            } else {
+                self.lending_pool_borrow
+                    .repay(sec_asset, eoa, amount, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
 
-                    self.lending_pool_borrow
-                        .borrow(asset, eoa, amount + fee, Vec::new())
-                        .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
-                } else {
-                    self.lending_pool_borrow
-                        .repay(sec_asset, eoa, amount, Vec::new())
-                        .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
-
-                    self.lending_pool_deposit
-                        .redeem(asset, eoa, amount + fee, Vec::new())
-                        .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
-                }
+                self.lending_pool_deposit
+                    .redeem(asset, eoa, amount + fee, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
             }
 
             Ok(())
