@@ -46,18 +46,6 @@ mod abaxcaller {
         }
 
         // internal functions
-        fn encode_data(&mut self, eoa: AccountId, flag: bool, asset: AccountId) -> Vec<u8> {
-            let mut encoded_data: Vec<u8> = Vec::new();
-
-            encoded_data.extend_from_slice(&eoa.encode());
-
-            encoded_data.push(if flag { 1 } else { 0 });
-
-            encoded_data.extend_from_slice(&asset.encode());
-
-            encoded_data
-        }
-
         fn decode_data(
             &mut self,
             encoded_data: Vec<u8>,
