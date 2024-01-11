@@ -38,16 +38,16 @@ mod abaxcaller {
         fn decode_data(
             &mut self,
             encoded_data: Vec<u8>,
-        ) -> Result<(AccountId, bool, AccountId), scale::Error> {
+        ) -> Result<(AccountId, u8, AccountId), scale::Error> {
             let mut data = encoded_data.as_slice();
 
-            let account_id1 = AccountId::decode(&mut data)?;
+            let eoa = AccountId::decode(&mut data)?;
 
-            let flag = data.read_byte().map(|byte| byte & 1 == 1)?;
+            let margin_type = data.read_byte()?;
 
-            let account_id2 = AccountId::decode(&mut data)?;
+            let asset = AccountId::decode(&mut data)?;
 
-            Ok((account_id1, flag, account_id2))
+            Ok((eoa, margin_type, asset))
         }
 
         // lending_pool_deposit functions
@@ -148,7 +148,7 @@ mod abaxcaller {
                 return Err(FlashLoanReceiverError::AssetNotMintable);
             }
 
-            let (eoa, is_open, sec_asset) = self
+            let (eoa, margin_type, sec_asset): (AccountId, u8, AccountId) = self
                 .decode_data(receiver_params)
                 .map_err(|_| FlashLoanReceiverError::CantApprove)?;
 
@@ -157,7 +157,7 @@ mod abaxcaller {
                     return Err(FlashLoanReceiverError::InsufficientBalance);
                 }
 
-                if is_open {
+                if margin_type == 0 {
                     self.lending_pool_deposit
                         .deposit(sec_asset, eoa, amount, Vec::new())
                         .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
