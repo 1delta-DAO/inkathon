@@ -209,6 +209,23 @@ mod abaxcaller {
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
             }
 
+            let mut sec_token: contract_ref!(PSP22) = sec_asset.into();
+            let sec_token_balance = sec_token.balance_of(self.env().account_id());
+            if sec_token_balance > 0 {
+                sec_token
+                    .transfer(eoa, sec_token_balance, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+            }
+
+            let mut token: contract_ref!(PSP22) = asset.into();
+            let token_balance = token.balance_of(self.env().account_id());
+            let token_balance_without_flashloan = token_balance - amount - fee;
+            if token_balance_without_flashloan > 0 {
+                token
+                    .transfer(eoa, token_balance_without_flashloan, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+            }
+
             Ok(())
         }
     }
