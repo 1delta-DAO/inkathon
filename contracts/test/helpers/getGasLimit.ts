@@ -39,11 +39,9 @@ export const getMaxGasLimit = (api: ApiPromise, reductionFactor = 0.8) => {
   return getGasLimit(api, maxRefTime, maxProofSize)
 }
 
-export const getSafeGasLimit = (
-  api: ApiPromise,
-  weight: WeightV2,
-  multiplyBy: number = GAS_LIMIT_MULTIPLIER,
-) => {
+export const getSafeGasLimit = (api: ApiPromise, weight: WeightV2, multiplyBy?: number) => {
+  multiplyBy = multiplyBy ?? GAS_LIMIT_MULTIPLIER
+
   const safeRefTime = weight.refTime.toBn().muln(multiplyBy)
   const safeProofSize = weight.proofSize.toBn().muln(multiplyBy)
 

@@ -76,6 +76,7 @@ export const contractTx = async (
   contract: ContractPromise,
   method: string,
   args = [] as unknown[],
+  gasLimitFactor?: number,
   options = {} as ContractOptions,
 ): Promise<ContractTxResult> => {
   // Check if account has sufficient balance
@@ -108,7 +109,7 @@ export const contractTx = async (
       const tx = contract.tx[stringCamelCase(method)](
         {
           ...options,
-          gasLimit: getSafeGasLimit(api, gasLimit),
+          gasLimit: getSafeGasLimit(api, gasLimit, gasLimitFactor),
         },
         ...args,
       )
