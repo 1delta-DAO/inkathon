@@ -20,8 +20,6 @@ mod abaxcaller {
     #[ink(storage)]
     pub struct AbaxCaller {
         abax_account: AccountId,
-        lending_pool_borrow: contract_ref!(LendingPoolBorrow),
-        lending_pool_deposit: contract_ref!(LendingPoolDeposit),
     }
 
     impl AbaxCaller {
@@ -29,8 +27,6 @@ mod abaxcaller {
         pub fn new(abax_address: AccountId) -> Self {
             Self {
                 abax_account: abax_address,
-                lending_pool_borrow: abax_address.into(),
-                lending_pool_deposit: abax_address.into(),
             }
         }
 
@@ -63,8 +59,10 @@ mod abaxcaller {
             let mut token: contract_ref!(PSP22) = asset.into();
             token.transfer_from(caller, self.env().account_id(), amount, Vec::new())?;
 
-            self.lending_pool_deposit
-                .deposit(asset, caller, amount, data)
+            let mut lending_pool_deposit: contract_ref!(LendingPoolDeposit) =
+                self.abax_account.into();
+
+            lending_pool_deposit.deposit(asset, caller, amount, data)
         }
 
         #[ink(message)]
@@ -76,9 +74,10 @@ mod abaxcaller {
         ) -> Result<(), PSP22Error> {
             let caller: AccountId = Self::env().caller();
 
-            let redeem_balance: u128 = self
-                .lending_pool_deposit
-                .redeem(asset, caller, amount, data)?;
+            let mut lending_pool_deposit: contract_ref!(LendingPoolDeposit) =
+                self.abax_account.into();
+
+            let redeem_balance: u128 = lending_pool_deposit.redeem(asset, caller, amount, data)?;
 
             let mut token: contract_ref!(PSP22) = asset.into();
             token.transfer(caller, redeem_balance, Vec::new())
@@ -94,8 +93,10 @@ mod abaxcaller {
         ) -> Result<(), PSP22Error> {
             let caller: AccountId = Self::env().caller();
 
-            self.lending_pool_borrow
-                .borrow(asset, caller, amount, data)?;
+            let mut lending_pool_borrow: contract_ref!(LendingPoolBorrow) =
+                self.abax_account.into();
+
+            lending_pool_borrow.borrow(asset, caller, amount, data)?;
 
             let mut token: contract_ref!(PSP22) = asset.into();
             token.transfer(caller, amount, Vec::new())
@@ -113,7 +114,10 @@ mod abaxcaller {
             let mut token: contract_ref!(PSP22) = asset.into();
             token.transfer_from(caller, self.env().account_id(), amount, Vec::new())?;
 
-            self.lending_pool_borrow.repay(asset, caller, amount, data)
+            let mut lending_pool_borrow: contract_ref!(LendingPoolBorrow) =
+                self.abax_account.into();
+
+            lending_pool_borrow.repay(asset, caller, amount, data)
         }
 
         // PSP22 functions
@@ -160,20 +164,25 @@ mod abaxcaller {
                 .decode_data(receiver_params)
                 .map_err(|_| FlashLoanReceiverError::CantApprove)?;
 
+            let mut lending_pool_deposit: contract_ref!(LendingPoolDeposit) =
+                self.abax_account.into();
+            let mut lending_pool_borrow: contract_ref!(LendingPoolBorrow) =
+                self.abax_account.into();
+
             if margin_type == 0 {
-                self.lending_pool_deposit
+                lending_pool_deposit
                     .deposit(sec_asset, eoa, amount, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
 
-                self.lending_pool_borrow
+                lending_pool_borrow
                     .borrow(asset, eoa, amount + fee, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
             } else {
-                self.lending_pool_borrow
+                lending_pool_borrow
                     .repay(sec_asset, eoa, amount, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
 
-                self.lending_pool_deposit
+                lending_pool_deposit
                     .redeem(asset, eoa, amount + fee, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
             }
