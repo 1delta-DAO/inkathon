@@ -164,12 +164,15 @@ mod abaxcaller {
                 .decode_data(receiver_params)
                 .map_err(|_| FlashLoanReceiverError::CantApprove)?;
 
+            // swap from asset to sec_asset missing here
+
             let mut lending_pool_deposit: contract_ref!(LendingPoolDeposit) =
                 self.abax_account.into();
             let mut lending_pool_borrow: contract_ref!(LendingPoolBorrow) =
                 self.abax_account.into();
 
             if margin_type == 0 {
+                // open position
                 lending_pool_deposit
                     .deposit(sec_asset, eoa, amount, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
@@ -177,13 +180,32 @@ mod abaxcaller {
                 lending_pool_borrow
                     .borrow(asset, eoa, amount + fee, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
-            } else {
+            } else if margin_type == 1 {
+                // close position
                 lending_pool_borrow
                     .repay(sec_asset, eoa, amount, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
 
                 lending_pool_deposit
                     .redeem(asset, eoa, amount + fee, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+            } else if margin_type == 2 {
+                // collateral swap
+                lending_pool_deposit
+                    .deposit(sec_asset, eoa, amount, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+
+                lending_pool_deposit
+                    .redeem(asset, eoa, amount + fee, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+            } else {
+                // debt swap
+                lending_pool_borrow
+                    .repay(sec_asset, eoa, amount, Vec::new())
+                    .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
+
+                lending_pool_borrow
+                    .borrow(asset, eoa, amount + fee, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
             }
 
