@@ -1,11 +1,11 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ContractPromise } from '@polkadot/api-contract'
-import { BN, Keyring } from '@polkadot/keyring'
-import { u8aToHex } from '@polkadot/util'
+import { Keyring } from '@polkadot/keyring'
 import { KeyringPair } from '@polkadot/keyring/types'
-import { BN } from '@polkadot/util'
+import { BN, u8aToHex } from '@polkadot/util'
 import { ASSETS } from '../../data/assets'
-import { address } from '../../deployments/addresses/abaxcaller/development'
+import { address as abaxCallerAddress } from '../../deployments/addresses/abaxcaller/development'
+import { address as andromedaCallerAddress } from '../../deployments/addresses/andromedacaller/development'
 import Abax from '../../typed_contracts/contracts/abax'
 import AbaxCaller from '../../typed_contracts/contracts/abaxcaller'
 import PSP22 from '../../typed_contracts/contracts/psp22'
@@ -25,6 +25,7 @@ const CALLER_FUNCTION_BORROW = 'borrow'
 const CALLER_FUNCTION_REPAY = 'repay'
 
 const TOKEN_FUNCTION_APPROVE = 'PSP22::approve'
+const TOKEN_FUNCTION_TRANSFER = 'PSP22::transfer'
 
 const MAXUINT128 = new BN(2).pow(new BN(128)).sub(new BN(1))
 
@@ -32,13 +33,25 @@ describe('Abaxcaller contract interactions', () => {
   let api: ApiPromise
   let account: KeyringPair
   let abax: Abax
-  let callAbaxCaller: (functionName: string, args: any[], caller?: KeyringPair) => Promise<any>
-  let callAbax: (functionName: string, args: any[], caller?: KeyringPair) => Promise<any>
+  let abaxCaller: AbaxCaller
+  let callAbaxCaller: (
+    functionName: string,
+    args: any[],
+    caller?: KeyringPair,
+    gasLimitFactor?: number,
+  ) => Promise<any>
+  let callAbax: (
+    functionName: string,
+    args: any[],
+    caller?: KeyringPair,
+    gasLimitFactor?: number,
+  ) => Promise<any>
   let callContract: (
     contract: ContractPromise,
     functionName: string,
     args: any[],
     caller?: KeyringPair,
+    gasLimitFactor?: number,
   ) => Promise<any>
 
   beforeAll(async () => {
@@ -47,24 +60,35 @@ describe('Abaxcaller contract interactions', () => {
     account = new Keyring({ type: 'sr25519' }).addFromUri('//Alice', { name: 'Alice' })
 
     abax = new Abax(ABAX_ADDRESS, account, api)
-    const abaxCaller = new AbaxCaller(address, account, api)
+    abaxCaller = new AbaxCaller(abaxCallerAddress, account, api)
 
     callContract = async (
       contract: ContractPromise,
       functionName: string,
       args: any[],
       caller: KeyringPair,
+      gasLimitFactor?: number,
     ) => {
-      await contractTx(api, caller ?? account, contract, functionName, args).catch((error) => {
-        console.error(functionName, error)
-      })
+      await contractTx(api, caller ?? account, contract, functionName, args, gasLimitFactor).catch(
+        (error) => {
+          console.error(functionName, error)
+        },
+      )
     }
 
-    callAbax = async (functionName: string, args: any[], caller?: KeyringPair) =>
-      await callContract(abax.nativeContract, functionName, args, caller)
+    callAbax = async (
+      functionName: string,
+      args: any[],
+      caller?: KeyringPair,
+      gasLimitFactor?: number,
+    ) => await callContract(abax.nativeContract, functionName, args, caller, gasLimitFactor)
 
-    callAbaxCaller = async (functionName: string, args: any[], caller?: KeyringPair) =>
-      await callContract(abaxCaller.nativeContract, functionName, args, caller)
+    callAbaxCaller = async (
+      functionName: string,
+      args: any[],
+      caller?: KeyringPair,
+      gasLimitFactor?: number,
+    ) => await callContract(abaxCaller.nativeContract, functionName, args, caller, gasLimitFactor)
   })
 
   afterAll(async () => {
@@ -83,7 +107,7 @@ describe('Abaxcaller contract interactions', () => {
 
       // approve for deposit: owner = account, spender = AbaxCaller
       const token = new PSP22(ASSETS[asset].address, account, api)
-      const approveDepositArgs = [address, depositAmount]
+      const approveDepositArgs = [abaxCallerAddress, depositAmount]
       await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
@@ -116,7 +140,7 @@ describe('Abaxcaller contract interactions', () => {
       await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveArgs)
 
       // approve for deposit: owner = account, spender = AbaxCaller
-      const approveDepositArgs = [address, depositAmount]
+      const approveDepositArgs = [abaxCallerAddress, depositAmount]
       await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
@@ -124,7 +148,7 @@ describe('Abaxcaller contract interactions', () => {
       await callAbaxCaller(CALLER_FUNCTION_DEPOSIT, depositArgs)
 
       // approve collateral token for withdrawal: owner = account, spender = AbaxCaller
-      const approveCollateralTokenArgs = [address, withdrawAmount]
+      const approveCollateralTokenArgs = [abaxCallerAddress, withdrawAmount]
       const collateralToken = new PSP22(ASSETS[asset].aTokenAddress, account, api)
       await callContract(
         collateralToken.nativeContract,
@@ -160,7 +184,7 @@ describe('Abaxcaller contract interactions', () => {
       await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveArgs)
 
       // approve for deposit: owner = account, spender = AbaxCaller
-      const approveDepositArgs = [address, depositAmount]
+      const approveDepositArgs = [abaxCallerAddress, depositAmount]
       await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
@@ -169,7 +193,7 @@ describe('Abaxcaller contract interactions', () => {
 
       // approve for borrow: owner = account, spender = AbaxCaller
       const debtToken = new PSP22(ASSETS[asset].vTokenAddress, account, api)
-      const approveBorrowArgs = [address, borrowAmount]
+      const approveBorrowArgs = [abaxCallerAddress, borrowAmount]
       await callContract(debtToken.nativeContract, TOKEN_FUNCTION_APPROVE, approveBorrowArgs)
 
       // set deposit as collateral
@@ -205,7 +229,7 @@ describe('Abaxcaller contract interactions', () => {
       await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveArgs)
 
       // approve for deposit: owner = account, spender = AbaxCaller
-      const approveDepositArgs = [address, depositAmount]
+      const approveDepositArgs = [abaxCallerAddress, depositAmount]
       await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
@@ -214,7 +238,7 @@ describe('Abaxcaller contract interactions', () => {
 
       // approve for borrow: owner = account, spender = AbaxCaller
       const debtToken = new PSP22(ASSETS[asset].vTokenAddress, account, api)
-      const approveBorrowArgs = [address, borrowAmount]
+      const approveBorrowArgs = [abaxCallerAddress, borrowAmount]
       await callContract(debtToken.nativeContract, TOKEN_FUNCTION_APPROVE, approveBorrowArgs)
 
       // set deposit as collateral
@@ -226,7 +250,7 @@ describe('Abaxcaller contract interactions', () => {
       await callAbaxCaller(CALLER_FUNCTION_BORROW, borrowArgs)
 
       // approve for repay: owner = account, spender = AbaxCaller
-      const approveRepayArgs = [address, repayAmount]
+      const approveRepayArgs = [abaxCallerAddress, repayAmount]
       await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveRepayArgs)
 
       // call repay function in AbaxCaller contract
@@ -245,49 +269,76 @@ describe('Abaxcaller contract interactions', () => {
   test(
     'Contract function calls deposit, flashloan (deposit and borrow)',
     async () => {
-      const asset = 'DOT'
-      const depositAmount = new BN(200).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
+      const asset = 'USDC'
+      const stableAsset = 'DAI'
+      const depositAmount = new BN(200).mul(new BN(10).pow(new BN(ASSETS[stableAsset].decimals)))
       const flashLoanAmount = new BN(50).mul(new BN(10).pow(new BN(ASSETS[asset].decimals)))
 
       // max approve: owner = AbaxCaller, spender = AbaxLendingPool
-      const maxApproveArgs = [ASSETS[asset].address, ABAX_ADDRESS, MAXUINT128]
-      await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveArgs)
+      const maxApproveAbaxStableArgs = [ASSETS[stableAsset].address, ABAX_ADDRESS, MAXUINT128]
+      await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveAbaxStableArgs)
+
+      // max approve: owner = AbaxCaller, spender = AbaxLendingPool
+      const maxApproveAbaxAssetArgs = [ASSETS[asset].address, ABAX_ADDRESS, MAXUINT128]
+      await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveAbaxAssetArgs)
+
+      // max approve: owner = AbaxCaller, spender = AndromedaCaller
+      const maxApproveAndromedaArgs = [ASSETS[asset].address, andromedaCallerAddress, MAXUINT128]
+      await callAbaxCaller(CALLER_FUNCTION_APPROVE, maxApproveAndromedaArgs)
 
       // approve for deposit: owner = account, spender = AbaxCaller
-      const token = new PSP22(ASSETS[asset].address, account, api)
-      const approveDepositArgs = [address, depositAmount]
-      await callContract(token.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
+      const stableToken = new PSP22(ASSETS[stableAsset].address, account, api)
+      const approveDepositArgs = [abaxCallerAddress, depositAmount]
+      await callContract(stableToken.nativeContract, TOKEN_FUNCTION_APPROVE, approveDepositArgs)
 
       // call deposit function in AbaxCaller contract
-      const depositArgs = [ASSETS[asset].address, depositAmount, []]
+      const depositArgs = [ASSETS[stableAsset].address, depositAmount, []]
       await callAbaxCaller(CALLER_FUNCTION_DEPOSIT, depositArgs)
+
+      // set deposit as collateral
+      const setCollateralArgs = [ASSETS[stableAsset].address, true]
+      await callAbax(ABAX_FUNCTION_SET_AS_COLLATERAL, setCollateralArgs)
 
       // approve for borrow in flash Loan: owner = account, spender = AbaxCaller
       const debtToken = new PSP22(ASSETS[asset].vTokenAddress, account, api)
-      const approveBorrowArgs = [address, flashLoanAmount]
+      const approveBorrowArgs = [abaxCallerAddress, MAXUINT128]
       await callContract(debtToken.nativeContract, TOKEN_FUNCTION_APPROVE, approveBorrowArgs)
 
-      // set deposit as collateral
-      const setCollateralArgs = [ASSETS[asset].address, true]
-      await callAbax(ABAX_FUNCTION_SET_AS_COLLATERAL, setCollateralArgs)
+      // sec_asset transfer for deposit (needed because we do not swap asset to sec_asset in flash loan yet)
+      await callContract(stableToken.nativeContract, TOKEN_FUNCTION_TRANSFER, [
+        abaxCallerAddress,
+        flashLoanAmount,
+        [],
+      ])
 
       // call flash loan function in AbaxCaller contract
       const encodedAccountId = api.createType('AccountId', account.address)
-      const encodedFlag = new Uint8Array([1])
-      const encodedAssetId = api.createType('AccountId', ASSETS[asset].address)
+      const encodedMarginType = new Uint8Array([0])
+      const encodedAssetId = api.createType('AccountId', ASSETS[stableAsset].address)
       const bytes = Uint8Array.from([
         ...encodedAccountId.toU8a(),
-        ...encodedFlag,
+        ...encodedMarginType,
         ...encodedAssetId.toU8a(),
       ])
-      const flashLoanArgs = [address, [ASSETS[asset].address], [flashLoanAmount], u8aToHex(bytes)]
-      await callAbax(ABAX_FUNCTION_FLASH_LOAN, flashLoanArgs)
+
+      const flashLoanArgs = [
+        abaxCallerAddress,
+        [ASSETS[asset].address],
+        [flashLoanAmount],
+        u8aToHex(bytes),
+      ]
+
+      const gasLimitFactor = 0.96
+      await callAbax(ABAX_FUNCTION_FLASH_LOAN, flashLoanArgs, null, gasLimitFactor)
 
       // view token balance for verification
       const realizedAmount = (await debtToken.query.balanceOf(account.address)).value.unwrap()
         .rawNumber
 
-      expect(realizedAmount.gte(flashLoanAmount)).toBeTruthy()
+      console.log(realizedAmount.toNumber())
+
+      //expect(realizedAmount.gte(flashLoanAmount)).toBeTruthy()
+      expect(false).toBeTruthy()
     },
     TIMEOUT,
   )
