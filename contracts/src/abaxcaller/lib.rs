@@ -178,7 +178,7 @@ mod abaxcaller {
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
 
                 lending_pool_borrow
-                    .borrow(asset, eoa, amount + fee, Vec::new())
+                    .borrow(asset, eoa, fee, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
             } else if margin_type == 1 {
                 // close position
@@ -209,6 +209,8 @@ mod abaxcaller {
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
             }
 
+            // commented out to first test opening a position alone
+            /*
             let mut sec_token: contract_ref!(PSP22) = sec_asset.into();
             let sec_token_balance = sec_token.balance_of(self.env().account_id());
             if sec_token_balance > 0 {
@@ -224,7 +226,7 @@ mod abaxcaller {
                 token
                     .transfer(eoa, token_balance_without_flashloan, Vec::new())
                     .map_err(|_| FlashLoanReceiverError::ExecuteOperationFailed)?;
-            }
+            } */
 
             Ok(())
         }
