@@ -15,18 +15,7 @@ mod abaxcaller {
     use ink::{contract_ref, prelude::vec::Vec};
     use openbrush::contracts::psp22::PSP22Error;
     use scale::Decode;
-    use scale::Encode;
     use scale::Input;
-
-    #[ink(event)]
-    pub struct FlashLoanTaken {
-        assets: Vec<AccountId>,
-        amounts: Vec<u128>,
-        fees: Vec<u128>,
-        eoa_address: AccountId,
-        is_open_position: bool,
-        secondary_asset: AccountId,
-    }
 
     #[ink(storage)]
     pub struct AbaxCaller {
@@ -162,15 +151,6 @@ mod abaxcaller {
             let (eoa, is_open, sec_asset) = self
                 .decode_data(receiver_params)
                 .map_err(|_| FlashLoanReceiverError::CantApprove)?;
-
-            self.env().emit_event(FlashLoanTaken {
-                assets: assets.clone(),
-                amounts: amounts.clone(),
-                fees: fees.clone(),
-                eoa_address: eoa.clone(),
-                is_open_position: is_open.clone(),
-                secondary_asset: sec_asset.clone(),
-            });
 
             for ((&asset, &amount), &fee) in assets.iter().zip(amounts.iter()).zip(fees.iter()) {
                 if amount <= 0 {
