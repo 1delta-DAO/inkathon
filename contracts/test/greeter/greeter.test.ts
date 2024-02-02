@@ -23,7 +23,8 @@ describe('Greeter contract interactions', () => {
     api = await ApiPromise.create({ provider })
     await api.isReady
     const keyring = new Keyring({ type: 'sr25519' })
-    alice = keyring.addFromUri('//Alice', { name: 'Alice' })
+    //alice = keyring.addFromUri('//Alice', { name: 'Alice' })
+    alice = keyring.addFromUri('//Bob', { name: 'Bob' })
     contract = new ContractPromise(api, abiPath, address)
   })
 
@@ -64,6 +65,26 @@ describe('Greeter contract interactions', () => {
     expect(result.isOk).toBe(true)
     expect(parsed_output['ok']).toBe(newValue)
   })
+
+  test('Contract function batch call set_message', async () => {
+    const newValue = 'bla'
+
+    await batchAllCall(api, contract, SET_MESSAGE_FUNCTION, alice, [newValue]).catch((error) => {
+      console.error('Error:', error)
+    })
+
+    const { gasRequired, storageDeposit, result, output } = await queryContract(
+      api,
+      contract,
+      GREET_FUNCTION,
+      alice.address,
+    )
+
+    const parsed_output = JSON.parse(output)
+
+    expect(result.isOk).toBe(true)
+    expect(parsed_output['ok']).toBe("newValue2")
+  }, 60000)
 })
 
 const queryContract = async (
@@ -121,6 +142,131 @@ export const callContract = (
             resolve(result)
           }
         })
+      })
+      .catch(reject)
+  })
+}
+
+export const batchCall = (
+  api,
+  contract,
+  functionName: string,
+  account: IKeyringPair,
+  args = [] as unknown[],
+) => {
+  return new Promise((resolve, reject) => {
+    queryContract(api, contract, functionName, account.address, args)
+      .then(({ gasRequired, storageDeposit, result, output }) => {
+        if (!result.isOk) {
+          reject({
+            output,
+            errorMessage: result.asErr || 'Error',
+          })
+          return
+        }
+
+        const gasLimit = gasRequired
+        const txs = [
+          api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000),
+          contract.tx[stringCamelCase(functionName)]({ gasLimit }, ...args),
+          contract.tx[stringCamelCase(functionName)]({ gasLimit }, ...["test"]),
+          contract.tx[stringCamelCase(functionName)]({ gasLimit }, ...args),
+          contract.tx[stringCamelCase(functionName)]({ gasLimit }, 2),
+          api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000),
+          api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000),
+          api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000),
+          api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000),
+        ];
+    
+        api.tx.utility
+          .batch(txs)
+          .signAndSend(account, ({ status }) => {
+            if (status.isFinalized) {
+              resolve(result)
+            }
+          });
+      })
+      .catch(reject)
+  })
+}
+
+export const batchCall100 = (
+  api,
+  contract,
+  functionName: string,
+  account: IKeyringPair,
+  args = [] as unknown[],
+) => {
+  return new Promise((resolve, reject) => {
+    queryContract(api, contract, functionName, account.address, args)
+      .then(({ gasRequired, storageDeposit, result, output }) => {
+        if (!result.isOk) {
+          reject({
+            output,
+            errorMessage: result.asErr || 'Error',
+          })
+          return
+        }
+
+        const gasLimit = gasRequired
+        const txs = []
+        for (let i = 0; i < 160; i++) {
+          const tx = contract.tx[stringCamelCase(functionName)]({ gasLimit }, ...args)
+          txs.push(tx)
+        }
+    
+        api.tx.utility
+          .batch(txs)
+          .signAndSend(account, ({ status }) => {
+            if (status.isFinalized) {
+              resolve(result)
+            }
+          });
+      })
+      .catch(reject)
+  })
+}
+
+
+
+export const batchAllCall = (
+  api,
+  contract,
+  functionName: string,
+  account: IKeyringPair,
+  args = [] as unknown[],
+) => {
+  return new Promise((resolve, reject) => {
+    queryContract(api, contract, functionName, account.address, args)
+      .then(({ gasRequired, storageDeposit, result, output }) => {
+        if (!result.isOk) {
+          reject({
+            output,
+            errorMessage: result.asErr || 'Error',
+          })
+          return
+        }
+
+        const gasLimit = gasRequired
+        const txs = []
+        for (let i = 0; i < 160; i++) {
+          const tx = contract.tx[stringCamelCase(functionName)]({ gasLimit }, ...args)
+          txs.push(tx)
+        }
+
+        txs.push(api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000))
+        txs.push(api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000))
+        txs.push(api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000))
+        txs.push(api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000))
+        txs.push(api.tx.balances.transfer("5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV", 10_000_000_000_000))
+
+        api.tx.utility
+          .batchAll(txs)
+          .signAndSend(account, ({ status }) => {
+            if (status.isFinalized) {
+              resolve(result)
+            }
+          });
       })
       .catch(reject)
   })
