@@ -1,4 +1,11 @@
 [workspace]
 
 resolver = "1"
-members = ["src/greeter", "src/oracleexample", "src/psp22", "src/abaxcaller", "src/andromedacaller"]
+members = [
+    "src/greeter",
+    "src/greetercaller",
+    "src/oracleexample",
+    "src/psp22",
+    "src/abaxcaller",
+    "src/andromedacaller",
+]

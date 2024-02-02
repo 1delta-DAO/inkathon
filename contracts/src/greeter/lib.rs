@@ -1,7 +1,12 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
+mod traits;
+
+pub use traits::IGreeter;
+
 #[ink::contract]
 mod greeter {
+    use crate::IGreeter;
     use ink::prelude::string::String;
 
     #[ink(event)]
@@ -30,16 +35,18 @@ mod greeter {
             let default_message = String::from("Hello ink!");
             Self::new(default_message)
         }
+    }
 
+    impl IGreeter for Greeter {
         /// Returns the current value of `message`.
         #[ink(message)]
-        pub fn greet(&self) -> String {
+        fn greet(&self) -> String {
             self.message.clone()
         }
 
         /// Sets `message` to the given value.
         #[ink(message)]
-        pub fn set_message(&mut self, new_value: String) {
+        fn set_message(&mut self, new_value: String) {
             self.message = new_value.clone();
 
             let from = self.env().caller();

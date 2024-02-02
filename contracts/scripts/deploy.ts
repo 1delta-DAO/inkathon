@@ -39,6 +39,22 @@ const deploy_greeter = async () => {
   await writeContractAddresses(chain.network, {
     greeter,
   })
+
+  return greeter.address
+}
+
+const deploy_greetercaller = async (greeter) => {
+  const initParams = await initPolkadotJs()
+  const { api, chain, account } = initParams
+
+  // Deploy greetercaller contract
+  const { abi, wasm } = await getDeploymentData('greetercaller')
+  const greetercaller = await deployContract(api, account, abi, wasm, 'new', [greeter])
+
+  // Write contract addresses to `{contract}/{network}.ts` file(s)
+  await writeContractAddresses(chain.network, {
+    greetercaller,
+  })
 }
 
 const deploy_oracleexample = async () => {
@@ -118,7 +134,9 @@ const deploy_andromedacaller = async () => {
 
 const deployContracts = async () => {
   try {
-    await deploy_greeter()
+    const address = await deploy_greeter()
+
+    await deploy_greetercaller(address)
 
     await deploy_oracleexample()
 
