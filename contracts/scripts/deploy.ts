@@ -43,6 +43,22 @@ const deploy_greeter = async () => {
   return greeter.address
 }
 
+const deploy_doublegreeter = async () => {
+  const initParams = await initPolkadotJs()
+  const { api, chain, account } = initParams
+
+  // Deploy greeter contract
+  const { abi, wasm } = await getDeploymentData('doublegreeter')
+  const doublegreeter = await deployContract(api, account, abi, wasm, 'default', [])
+
+  // Write contract addresses to `{contract}/{network}.ts` file(s)
+  await writeContractAddresses(chain.network, {
+    doublegreeter,
+  })
+
+  return doublegreeter.address
+}
+
 const deploy_greetercaller = async (greeter) => {
   const initParams = await initPolkadotJs()
   const { api, chain, account } = initParams
@@ -54,6 +70,34 @@ const deploy_greetercaller = async (greeter) => {
   // Write contract addresses to `{contract}/{network}.ts` file(s)
   await writeContractAddresses(chain.network, {
     greetercaller,
+  })
+}
+
+const deploy_doublegreetercaller = async (greeter) => {
+  const initParams = await initPolkadotJs()
+  const { api, chain, account } = initParams
+
+  // Deploy greetercaller contract
+  const { abi, wasm } = await getDeploymentData('doublegreetercaller')
+  const doublegreetercaller = await deployContract(api, account, abi, wasm, 'new', [greeter])
+
+  // Write contract addresses to `{contract}/{network}.ts` file(s)
+  await writeContractAddresses(chain.network, {
+    doublegreetercaller,
+  })
+}
+
+const deploy_greetercaller_with_storage = async (greeter) => {
+  const initParams = await initPolkadotJs()
+  const { api, chain, account } = initParams
+
+  // Deploy greetercaller contract
+  const { abi, wasm } = await getDeploymentData('greetercaller_with_storage')
+  const greetercaller_with_storage = await deployContract(api, account, abi, wasm, 'new', [greeter, 'default'])
+
+  // Write contract addresses to `{contract}/{network}.ts` file(s)
+  await writeContractAddresses(chain.network, {
+    greetercaller_with_storage,
   })
 }
 
@@ -135,16 +179,11 @@ const deploy_andromedacaller = async () => {
 const deployContracts = async () => {
   try {
     const address = await deploy_greeter()
+    const address2 = await deploy_doublegreeter()
 
     await deploy_greetercaller(address)
-
-    await deploy_oracleexample()
-
-    await deploy_psp22()
-
-    await deploy_abaxcaller()
-
-    await deploy_andromedacaller()
+    await deploy_doublegreetercaller(address)
+    await deploy_greetercaller_with_storage(address)
 
     console.log('\nDeployments completed successfully')
   } catch (error) {
