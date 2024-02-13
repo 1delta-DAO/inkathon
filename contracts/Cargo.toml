@@ -3,9 +3,8 @@
 resolver = "1"
 members = [
     "src/greeter",
+    "src/doublegreeter",
     "src/greetercaller",
-    "src/oracleexample",
-    "src/psp22",
-    "src/abaxcaller",
-    "src/andromedacaller",
+    "src/doublegreetercaller",
+    "src/greetercaller_with_storage",
 ]
